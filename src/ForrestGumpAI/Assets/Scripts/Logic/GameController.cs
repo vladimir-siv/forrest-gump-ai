@@ -1,36 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-	[SerializeField] private Agent Player = null;
+	public GameObject AgentPrototype = null;
+	public GameObject[] AgentModels = null;
 
-	private readonly InputCheck WKey = new InputCheck(KeyCode.W);
-	private readonly InputCheck DKey = new InputCheck(KeyCode.D);
-	private readonly InputCheck RKey = new InputCheck(KeyCode.R);
+	private Agent Player = null;
 
 	private void Start()
 	{
-		Player.OnConstruct();
+		Dependency.Create(this);
 	}
 
 	private void Update()
 	{
-		if (WKey)
+		if (Input.GetKeyDown(KeyCode.Return))
 		{
-			Player.Run();
+			if (Player == null)
+			{
+				Player = ObjectActivator.Construct<Agent>();
+			}
+			else
+			{
+				ObjectActivator.Destruct(Player);
+				Player = null;
+			}
 		}
 
-		if (DKey)
+		if (Input.GetKeyDown(KeyCode.W))
 		{
-			Player.Die();
+			Player?.Run();
 		}
 
-		if (RKey)
+		if (Input.GetKeyDown(KeyCode.S))
 		{
-			Player.OnDestruct();
-			Player.OnConstruct();
+			Player?.Die();
 		}
 	}
 }

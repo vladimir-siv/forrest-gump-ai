@@ -5,6 +5,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 {
 	[SerializeField] private float acceleration = 250f;
 	[SerializeField] private float velocity = 7.5f;
+	[SerializeField] private float rotationSpeed = 75f;
 
 	private Rigidbody _body = null;
 	public Rigidbody body
@@ -28,17 +29,26 @@ public class Agent : MonoBehaviour, IPoolableObject
 
 	public bool IsRunning { get; private set; } = false;
 	public bool CanSteer { get; private set; } = false;
+	public float BuiltVelocity { get; private set; } = 0f;
 
 	public void OnConstruct()
 	{
 		gameObject.SetActive(true);
-		transform.position = Vector3.zero;
-	}
 
+		if (transform.childCount == 0)
+		{
+			var agentModelIndex = Random.Range(0, Dependency.Controller.AgentModels.Length);
+			var agentModel = Dependency.Controller.AgentModels[agentModelIndex];
+			var model = Instantiate(agentModel);
+			model.transform.SetParent(transform);
+			model.transform.localPosition = Vector3.zero;
+		}
+	}
 	public void OnDestruct()
 	{
 		IsRunning = false;
 		CanSteer = false;
+		BuiltVelocity = 0f;
 		animator.Rebind();
 		gameObject.SetActive(false);
 	}
@@ -59,13 +69,33 @@ public class Agent : MonoBehaviour, IPoolableObject
 			yield return Timing.FixedUpdate;
 		}
 
+		BuiltVelocity = body.velocity.magnitude;
 		CanSteer = true;
-		Debug.Log("CanSteer");
+	}
+
+	public void Steer(int factor)
+	{
+		if (!CanSteer) return;
+		transform.Rotate(0f, factor * Time.fixedDeltaTime * rotationSpeed, 0f);
+		body.velocity = transform.forward * BuiltVelocity;
 	}
 
 	public void Die()
 	{
+		if (!IsRunning) return;
 		body.velocity = Vector3.zero;
 		animator.SetTrigger("Die");
+	}
+
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("Wall")) Die();
+	}
+
+	// Human controls
+	private void FixedUpdate()
+	{
+		if (Input.GetKey(KeyCode.A)) Steer(-1);
+		if (Input.GetKey(KeyCode.D)) Steer(+1);
 	}
 }

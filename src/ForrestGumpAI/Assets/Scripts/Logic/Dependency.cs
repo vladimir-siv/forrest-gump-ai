@@ -9,6 +9,8 @@
 		_PoolsInitialized = true;
 
 		ObjectActivator.CreatePool<Agent>(Controller.AgentPrototype);
+		ObjectActivator.CreatePool<Wall>(Controller.WallPrototype);
+		ObjectActivator.CreatePool<StraightPathway>(Controller.StraightPathwayPrototype);
 	}
 
 	public static void Create(GameController controller)

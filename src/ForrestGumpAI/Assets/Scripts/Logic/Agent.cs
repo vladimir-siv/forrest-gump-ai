@@ -33,8 +33,6 @@ public class Agent : MonoBehaviour, IPoolableObject
 
 	public void OnConstruct()
 	{
-		gameObject.SetActive(true);
-
 		if (transform.childCount == 0)
 		{
 			var agentModelIndex = Random.Range(0, Dependency.Controller.AgentModels.Length);
@@ -43,12 +41,11 @@ public class Agent : MonoBehaviour, IPoolableObject
 			model.transform.SetParent(transform);
 			model.transform.localPosition = Vector3.zero;
 		}
+
+		gameObject.SetActive(true);
 	}
 	public void OnDestruct()
 	{
-		IsRunning = false;
-		CanSteer = false;
-		BuiltVelocity = 0f;
 		animator.Rebind();
 		gameObject.SetActive(false);
 	}
@@ -83,8 +80,12 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public void Die()
 	{
 		if (!IsRunning) return;
+		IsRunning = false;
+		CanSteer = false;
+		BuiltVelocity = 0f;
 		body.velocity = Vector3.zero;
 		animator.SetTrigger("Die");
+		Dependency.Controller.OnAgentDeath(this);
 	}
 
 	private void OnTriggerEnter(Collider other)

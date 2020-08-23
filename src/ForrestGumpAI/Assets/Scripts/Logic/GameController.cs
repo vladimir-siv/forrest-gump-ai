@@ -4,15 +4,33 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-	[SerializeField] private Animator PlayerAnimator = null;
+	[SerializeField] private Agent Player = null;
 
-	private readonly InputCheck SKey = new InputCheck(KeyCode.S);
-	
-	void Update()
+	private readonly InputCheck WKey = new InputCheck(KeyCode.W);
+	private readonly InputCheck DKey = new InputCheck(KeyCode.D);
+	private readonly InputCheck RKey = new InputCheck(KeyCode.R);
+
+	private void Start()
 	{
-		if (SKey)
+		Player.OnConstruct();
+	}
+
+	private void Update()
+	{
+		if (WKey)
 		{
-			PlayerAnimator.SetTrigger("Die");
+			Player.Run();
+		}
+
+		if (DKey)
+		{
+			Player.Die();
+		}
+
+		if (RKey)
+		{
+			Player.OnDestruct();
+			Player.OnConstruct();
 		}
 	}
 }

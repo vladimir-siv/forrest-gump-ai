@@ -5,7 +5,7 @@ public class GameController : MonoBehaviour
 	public GameObject AgentPrototype = null;
 	public GameObject[] AgentModels = null;
 
-	private Agent Player = null;
+	public Agent[] Agents = null;
 
 	private void Start()
 	{
@@ -16,25 +16,25 @@ public class GameController : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.Return))
 		{
-			if (Player == null)
+			if (Agents[0] == null)
 			{
-				Player = ObjectActivator.Construct<Agent>();
+				Agents[0] = ObjectActivator.Construct<Agent>();
 			}
 			else
 			{
-				ObjectActivator.Destruct(Player);
-				Player = null;
+				ObjectActivator.Destruct(Agents[0]);
+				Agents[0] = null;
 			}
 		}
 
 		if (Input.GetKeyDown(KeyCode.W))
 		{
-			Player?.Run();
+			Agents[0]?.Run();
 		}
 
 		if (Input.GetKeyDown(KeyCode.S))
 		{
-			Player?.Die();
+			Agents[0]?.Die();
 		}
 	}
 }

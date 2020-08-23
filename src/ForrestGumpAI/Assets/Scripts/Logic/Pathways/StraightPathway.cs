@@ -28,8 +28,16 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 		gameObject.SetActive(false);
 	}
 
-	public void Connect(PathwayConnector connector)
+	public void ConnectTo(Vector3 position, float rotation)
 	{
-
+		transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+		transform.position = position + Depth * transform.forward / 2f;
 	}
+	public void ConnectOn(IPathway pathway)
+	{
+		var position = transform.position + Depth * transform.forward / 2f;
+		var rotation = transform.rotation.eulerAngles.y;
+		pathway.ConnectTo(position, rotation);
+	}
+	public void Destruct() => ObjectActivator.Destruct(this);
 }

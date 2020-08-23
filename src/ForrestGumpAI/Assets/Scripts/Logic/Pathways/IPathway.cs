@@ -1,4 +1,8 @@
-﻿interface IPathway
+﻿using UnityEngine;
+
+public interface IPathway
 {
-	void Connect(PathwayConnector pathway);
+	void ConnectTo(Vector3 position, float rotation);
+	void ConnectOn(IPathway pathway);
+	void Destruct();
 }

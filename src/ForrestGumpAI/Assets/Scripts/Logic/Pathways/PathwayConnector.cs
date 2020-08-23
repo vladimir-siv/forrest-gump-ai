@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PathwayConnector : MonoBehaviour, IPoolableObject
+public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 {
 	private Transform _ground = null;
 	public Transform Ground
@@ -133,4 +128,20 @@ public class PathwayConnector : MonoBehaviour, IPoolableObject
 	{
 		gameObject.SetActive(false);
 	}
+
+	public void ConnectTo(Vector3 position, float rotation)
+	{
+		Enter.gameObject.SetActive(false);
+		transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+		transform.position = position + GroundHalfScale * transform.forward;
+	}
+	public void ConnectOn(IPathway pathway)
+	{
+		var leftExitEnd = LeftExit.position + LeftExit.localScale.z * -LeftExit.right / 2f;
+		var rightExitEnd = RightExit.position + RightExit.localScale.z * -RightExit.right / 2f;
+		var position = (leftExitEnd + rightExitEnd) / 2f;
+		var rotation = Angle + transform.rotation.eulerAngles.y;
+		pathway.ConnectTo(position, rotation);
+	}
+	public void Destruct() => ObjectActivator.Destruct(this);
 }

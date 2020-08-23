@@ -10,6 +10,7 @@
 
 		ObjectActivator.CreatePool<Agent>(Controller.AgentPrototype);
 		ObjectActivator.CreatePool<Wall>(Controller.WallPrototype);
+		ObjectActivator.CreatePool<PathwayConnector>(Controller.PathwayConnectorPrototype);
 		ObjectActivator.CreatePool<StraightPathway>(Controller.StraightPathwayPrototype);
 	}
 

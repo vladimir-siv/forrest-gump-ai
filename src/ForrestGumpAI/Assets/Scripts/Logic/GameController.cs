@@ -4,14 +4,17 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 	public GameObject WallPrototype = null;
+	public GameObject PathwayConnectorPrototype = null;
 	public GameObject StraightPathwayPrototype = null;
 	public GameObject AgentPrototype = null;
 	public GameObject[] AgentModels = null;
 	public Agent[] Agents = null;
 
-	public int AgentsLeft { get; private set; }
+	[SerializeField] Vector3 SpawnPoint = Vector3.zero;
+	[SerializeField] float SpawnRotation = 0f;
 
-	[SerializeField] private PathwayConnector Spawn = null;
+	public int AgentsLeft { get; private set; }
+	private TerrainGenerator terrain = new TerrainGenerator();
 
 	private void Start()
 	{
@@ -20,12 +23,14 @@ public class GameController : MonoBehaviour
 	}
 	private void Restart()
 	{
+		var spawn = terrain.Begin(SpawnPoint, SpawnRotation);
+
 		for (var i = 0; i < Agents.Length; ++i)
 		{
 			Agents[i] = ObjectActivator.Construct<Agent>();
 			Agents[i].AgentDeath += OnAgentDeath;
-			Agents[i].transform.position = Spawn.transform.position - Spawn.transform.forward * 2.5f;
-			Agents[i].transform.rotation = Spawn.transform.rotation;
+			Agents[i].transform.position = spawn.transform.position - spawn.transform.forward * 2.5f;
+			Agents[i].transform.rotation = spawn.transform.rotation;
 		}
 
 		AgentsLeft = Agents.Length;

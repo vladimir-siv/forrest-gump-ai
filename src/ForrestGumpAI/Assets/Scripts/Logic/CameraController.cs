@@ -4,7 +4,7 @@ public class CameraController : MonoBehaviour
 {
 	[SerializeField] private CameraMode Mode = CameraMode.ThirdPerson;
 
-	public Agent Following { get; set; } = null;
+	public Agent Following { get; set; }
 
 	private void Update()
 	{
@@ -14,10 +14,16 @@ public class CameraController : MonoBehaviour
 			else Mode = CameraMode.ThirdPerson;
 		}
 
-		if (Input.GetKeyDown(KeyCode.X))
+		if (Input.GetKeyDown(KeyCode.X) || Following == null || Following.IsDead)
 		{
-			// Get Random Agent, or some logic which one to view
-			Following = Dependency.Controller.Agents[0];
+			var agents = Dependency.Controller.Agents;
+
+			for (var i = 0; i < agents.Length; ++i)
+			{
+				if (agents[i].IsDead) continue;
+				Following = agents[i];
+				break;
+			}
 		}
 	}
 

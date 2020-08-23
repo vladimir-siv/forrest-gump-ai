@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour
 		for (var i = 0; i < Agents.Length; ++i)
 		{
 			Agents[i] = ObjectActivator.Construct<Agent>();
+			Agents[i].AgentDeath += OnAgentDeath;
 			Agents[i].transform.position = Spawn.transform.position - Spawn.transform.forward * 2.5f;
 			Agents[i].transform.rotation = Spawn.transform.rotation;
 		}
@@ -39,7 +40,7 @@ public class GameController : MonoBehaviour
 	{
 		yield return Timing.RagdollTimeout;
 		ObjectActivator.Destruct((Agent)agent);
-		//if (AgentsLeft == 0) Restart();
+		if (AgentsLeft == 0) Restart();
 	}
 
 	private void Update()

@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+
+using Random = UnityEngine.Random;
 
 public class Agent : MonoBehaviour, IPoolableObject
 {
@@ -27,9 +30,13 @@ public class Agent : MonoBehaviour, IPoolableObject
 		}
 	}
 
+	public bool IsDead { get; private set; } = false;
 	public bool IsRunning { get; private set; } = false;
 	public bool CanSteer { get; private set; } = false;
 	public float BuiltVelocity { get; private set; } = 0f;
+
+	public event Action<Agent> AgentPreDeath;
+	public event Action<Agent> AgentDeath;
 
 	public void OnConstruct()
 	{
@@ -42,17 +49,20 @@ public class Agent : MonoBehaviour, IPoolableObject
 			model.transform.localPosition = Vector3.zero;
 		}
 
+		IsDead = false;
 		gameObject.SetActive(true);
 	}
 	public void OnDestruct()
 	{
 		animator.Rebind();
 		gameObject.SetActive(false);
+		AgentPreDeath = null;
+		AgentDeath = null;
 	}
 
 	public void Run()
 	{
-		if (IsRunning) return;
+		if (IsDead || IsRunning) return;
 		IsRunning = true;
 		animator.SetTrigger("Run");
 		StartCoroutine("Accelerate");
@@ -79,13 +89,15 @@ public class Agent : MonoBehaviour, IPoolableObject
 
 	public void Die()
 	{
-		if (!IsRunning) return;
+		if (IsDead) return;
+		IsDead = true;
 		IsRunning = false;
 		CanSteer = false;
 		BuiltVelocity = 0f;
 		body.velocity = Vector3.zero;
 		animator.SetTrigger("Die");
-		Dependency.Controller.OnAgentDeath(this);
+		AgentPreDeath?.Invoke(this);
+		AgentDeath?.Invoke(this);
 	}
 
 	private void OnTriggerEnter(Collider other)

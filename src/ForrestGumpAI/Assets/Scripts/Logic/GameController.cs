@@ -18,8 +18,9 @@ public class GameController : MonoBehaviour
 
 	private void Start()
 	{
-		Random.InitState(6326);
+		//Random.InitState(6326); - Map seed
 		Dependency.Create(this);
+		AIController.Setup();
 		Restart();
 	}
 	private void Restart()
@@ -29,24 +30,27 @@ public class GameController : MonoBehaviour
 		for (var i = 0; i < Agents.Length; ++i)
 		{
 			Agents[i] = ObjectActivator.Construct<Agent>();
-			Agents[i].AgentDeath += OnAgentDeath;
+			Agents[i].AgentDeath += agent => StartCoroutine("AgentDeath", agent);
 			Agents[i].transform.position = spawn.transform.position - spawn.transform.forward * 2.5f;
 			Agents[i].transform.rotation = spawn.transform.rotation;
+			Agents[i].Run();
 		}
 
 		AgentsLeft = Agents.Length;
+
+		AIController.CycleBegin();
 	}
 
-	public void OnAgentDeath(Agent agent)
-	{
-		--AgentsLeft;
-		StartCoroutine("CollectRagdoll", agent);
-	}
-	private IEnumerator CollectRagdoll(object agent)
+	private IEnumerator AgentDeath(object agent)
 	{
 		yield return Timing.RagdollTimeout;
 		ObjectActivator.Destruct((Agent)agent);
-		if (AgentsLeft == 0) Restart();
+		
+		if (--AgentsLeft == 0)
+		{
+			AIController.CycleEnd();
+			Restart();
+		}
 	}
 
 	public void GenerateTerrain()
@@ -59,16 +63,5 @@ public class GameController : MonoBehaviour
 		while (terrain.Remove()) ;
 	}
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.W))
-		{
-			Agents[0].Run();
-		}
-
-		if (Input.GetKeyDown(KeyCode.S))
-		{
-			Agents[0].Die();
-		}
-	}
+	private void FixedUpdate() => AIController.Loop();
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class GameController : MonoBehaviour
 
 	[SerializeField] Vector3 SpawnPoint = Vector3.zero;
 	[SerializeField] float SpawnRotation = 0f;
+	[SerializeField] Text GenerationDisplay = null;
 
 	public int AgentsLeft { get; private set; }
 	private readonly TerrainGenerator terrain = new TerrainGenerator();
@@ -39,6 +41,8 @@ public class GameController : MonoBehaviour
 		AgentsLeft = Agents.Length;
 
 		AIController.CycleBegin();
+
+		GenerationDisplay.text = $"Generation: {AIController.Generation:0000}";
 	}
 
 	private IEnumerator AgentDeath(object agent)

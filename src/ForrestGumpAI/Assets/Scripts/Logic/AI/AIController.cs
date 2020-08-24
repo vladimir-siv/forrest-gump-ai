@@ -23,6 +23,7 @@ public static class AIController
 			return prototype;
 		}
 	}
+	public static uint Generation => system?.CurrentGeneration ?? 0u;
 
 	public static void Setup()
 	{

@@ -104,29 +104,57 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 		var rotation = Quaternion.Euler(0f, Angle, 0f);
 		var angle = Mathf.Deg2Rad * Angle;
 
-		var sinAngle = Mathf.Sin(angle);
-		var cosAngle = Mathf.Cos(angle);
-		var signAngle = Mathf.Sign(angle);
+		var leftEnterRootPosition  = - (Vector3.forward + Vector3.right) * GroundHalfScale / 2f + LeftEnter .localUp() * LeftEnter .localScale.y / 2f;
+		var rightEnterRootPosition = - (Vector3.forward - Vector3.right) * GroundHalfScale / 2f + RightEnter.localUp() * RightEnter.localScale.y / 2f;
 
-		var enterScale = GroundHalfScale * (2f - cosAngle);
-		var leftScale = angle >= 0f ? enterScale : GroundHalfScale;
-		var rightScale = angle <= 0f ? enterScale : GroundHalfScale;
+		LeftEnter .RescaleZ(GroundHalfScale * (Angle > 0 ? 2f : 1f));
+		RightEnter.RescaleZ(GroundHalfScale * (Angle < 0 ? 2f : 1f));
 
-		LeftEnter .RescaleZ( leftScale);
-		RightEnter.RescaleZ(rightScale);
-		LeftEnter .MoveZ( leftScale / 2f - GroundHalfScale);
-		RightEnter.MoveZ(rightScale / 2f - GroundHalfScale);
+		LeftEnter .MoveZ(leftEnterRootPosition .z + (Angle > 0 ? GroundHalfScale / 2f : 0f));
+		RightEnter.MoveZ(rightEnterRootPosition.z + (Angle < 0 ? GroundHalfScale / 2f : 0f));
 
-		LeftExit .RescaleZ(leftScale);
-		RightExit.RescaleZ(rightScale);
-		LeftExit .MoveZ(GroundHalfScale / 2f + (+signAngle * GroundHalfScale * (1f - cosAngle) / 2f));
-		RightExit.MoveZ(GroundHalfScale / 2f + (-signAngle * GroundHalfScale * (1f - cosAngle) / 2f));
+		var leftExitRootPosition  = (Vector3.forward - Vector3.right) * GroundHalfScale / 2f + LeftEnter .localUp() * LeftEnter .localScale.y / 2f;
+		var rightExitRootPosition = (Vector3.forward + Vector3.right) * GroundHalfScale / 2f + RightEnter.localUp() * RightEnter.localScale.y / 2f;
 
-		LeftExit .MoveX(LeftEnter.localPosition.x + leftScale * sinAngle / 2f);
-		RightExit.MoveX(RightEnter.localPosition.x + rightScale * sinAngle / 2f);
+		LeftExit .RescaleZ(GroundHalfScale);
+		RightExit.RescaleZ(GroundHalfScale);
 
 		LeftExit .localRotation = rotation;
 		RightExit.localRotation = rotation;
+
+		var delta = GroundHalfScale * (1f - 1f / Mathf.Sqrt(1f + Mathf.Pow(Mathf.Tan(angle), 2f))) / 2f;
+		LeftExit .localPosition = leftExitRootPosition  - LeftExit .localRight() * delta;
+		RightExit.localPosition = rightExitRootPosition + RightExit.localRight() * delta;
+
+		var xdelta = 0f;
+		if (Angle > 0)		xdelta = RightEnter.localPosition.x - (RightExit.localPosition - RightExit.localForward() * RightExit.localScale.z / 2f).x;
+		else if (Angle < 0) xdelta = LeftEnter .localPosition.x - (LeftExit .localPosition - LeftExit .localForward() * LeftExit .localScale.z / 2f).x;
+		LeftExit .MoveX(LeftExit .localPosition.x + xdelta);
+		RightExit.MoveX(RightExit.localPosition.x + xdelta);
+
+		var zdelta = 0f;
+		if (Angle > 0)		zdelta = (RightExit.localPosition - RightExit.localForward() * RightExit.localScale.z / 2f).z - (RightEnter.localPosition + RightEnter.localForward() * RightEnter.localScale.z / 2f).z;
+		else if (Angle < 0) zdelta = (LeftExit .localPosition - LeftExit .localForward() * LeftExit .localScale.z / 2f).z - (LeftEnter .localPosition + LeftEnter .localForward() * LeftEnter .localScale.z / 2f).z;
+		LeftExit .MoveZ(LeftExit .localPosition.z - zdelta);
+		RightExit.MoveZ(RightExit.localPosition.z - zdelta);
+
+		if (Angle > 0)
+		{
+			var endPoint = RightExit.localPosition + RightExit.localForward() * RightExit.localScale.z / 2f - RightExit.localRight() * GroundHalfScale;
+			var scale = Vector3.Distance(endPoint, LeftExit.localPosition);
+			LeftExit.RescaleZ(scale * 2f);
+		}
+		else if (Angle < 0)
+		{
+			var endPoint = LeftExit .localPosition + LeftExit .localForward() * LeftExit .localScale.z / 2f + LeftExit .localRight() * GroundHalfScale;
+			var scale = Vector3.Distance(endPoint, RightExit.localPosition);
+			RightExit.RescaleZ(scale * 2f);
+		}
+		else
+		{
+			LeftExit.RescaleZ(GroundHalfScale);
+			RightExit.RescaleZ(GroundHalfScale);
+		}
 	}
 
 	public void OnConstruct()

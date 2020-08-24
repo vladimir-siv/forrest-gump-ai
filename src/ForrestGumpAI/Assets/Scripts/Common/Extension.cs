@@ -9,4 +9,8 @@ public static class Extension
 	public static void MoveX(this Transform transform, float value) => transform.localPosition = new Vector3(value, transform.localPosition.y, transform.localPosition.z);
 	public static void MoveY(this Transform transform, float value) => transform.localPosition = new Vector3(transform.localPosition.x, value, transform.localPosition.z);
 	public static void MoveZ(this Transform transform, float value) => transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, value);
+
+	public static Vector3 localUp(this Transform transform) => transform.parent.InverseTransformDirection(transform.up);
+	public static Vector3 localRight(this Transform transform) => transform.parent.InverseTransformDirection(transform.right);
+	public static Vector3 localForward(this Transform transform) => transform.parent.InverseTransformDirection(transform.forward);
 }

@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
 
 	private void Start()
 	{
+		Random.InitState(6326);
 		Dependency.Create(this);
 		Restart();
 	}

@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
 
 			for (var i = 0; i < agents.Length; ++i)
 			{
-				if (agents[i].IsDead) continue;
+				if (agents[i] == null || agents[i].IsDead) continue;
 				Following = agents[i];
 				break;
 			}

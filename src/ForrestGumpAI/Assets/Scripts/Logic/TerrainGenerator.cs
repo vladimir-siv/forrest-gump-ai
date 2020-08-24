@@ -34,13 +34,13 @@ public class TerrainGenerator
 		if (last is PathwayConnector)
 		{
 			var straight = ObjectActivator.Construct<StraightPathway>();
-			straight.SetDimension(5f, 10f/*Random.Range(10f, 20f)*/);
+			straight.SetDimension(5f, Random.Range(10f, 20f));
 			pathway = straight;
 		}
 		else
 		{
 			var connector = ObjectActivator.Construct<PathwayConnector>();
-			connector.Angle = 30f; //Random.Range(-90f, 90f);
+			connector.Angle = Random.Range(-90f, 90f);
 			pathway = connector;
 		}
 

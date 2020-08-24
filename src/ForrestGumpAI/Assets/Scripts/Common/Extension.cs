@@ -13,4 +13,21 @@ public static class Extension
 	public static Vector3 localUp(this Transform transform) => transform.parent.InverseTransformDirection(transform.up);
 	public static Vector3 localRight(this Transform transform) => transform.parent.InverseTransformDirection(transform.right);
 	public static Vector3 localForward(this Transform transform) => transform.parent.InverseTransformDirection(transform.forward);
+
+	public static int ArgMax(this float[] vals)
+	{
+		var maxv = float.NegativeInfinity;
+		var maxi = -1;
+
+		for (var i = 0; i < vals.Length; ++i)
+		{
+			if (vals[i] >= maxv)
+			{
+				maxv = vals[i];
+				maxi = i;
+			}
+		}
+
+		return maxi;
+	}
 }

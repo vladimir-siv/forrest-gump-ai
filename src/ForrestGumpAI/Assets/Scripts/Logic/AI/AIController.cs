@@ -1,23 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GrandIntelligence;
 
 public static class AIController
 {
-	private static Agent[] agents;
-	private static Bot[] bots;
+	private static Agent[] agents = null;
+	private static Bot[] bots = null;
+
+	private static DarwinBgea system = null;
+	private static NeuralBuilder prototype = null;
+
+	public static NeuralBuilder BrainPrototype
+	{
+		get
+		{
+			if (prototype == null)
+			{
+				prototype = new NeuralBuilder(5u);
+				prototype.FCLayer(8u, ActivationFunction.ELU);
+				prototype.FCLayer(4u, ActivationFunction.ELU);
+				prototype.FCLayer(3u, ActivationFunction.Sigmoid);
+			}
+
+			return prototype;
+		}
+	}
 
 	public static void Setup()
 	{
+		GICore.Init(new Spec(DeviceType.Cpu));
+
 		agents = Dependency.Controller.Agents;
 		bots = new Bot[agents.Length];
+
+		var first = new Population((uint)bots.Length);
 
 		for (var i = 0; i < bots.Length; ++i)
 		{
 			bots[i] = new Bot();
+			first.Add(bots[i].Brain);
 		}
+
+		system = new DarwinBgea
+		(
+			first,
+			Selection.RandFit(1u),
+			BasicBrain.Mating(first.Size, ((BasicBrain)first[0u]).NeuralNetwork.Params),
+			generations: 1000u,
+			mutation: 25.0f
+		);
+	}
+
+	public static void Cleanup()
+	{
+		prototype?.Dispose();
+		prototype = null;
+
+		system?.Dispose();
+		system = null;
+
+		GICore.Release();
 	}
 
 	public static void CycleBegin()
@@ -26,6 +66,8 @@ public static class AIController
 		{
 			bots[i].Agent = agents[i];
 		}
+
+		EvolutionTracker.Begin();
 	}
 
 	public static void Loop()
@@ -38,6 +80,13 @@ public static class AIController
 
 	public static void CycleEnd()
 	{
+		if (system == null) return;
 
+		system.Cycle();
+
+		for (var i = 0; i < bots.Length; ++i)
+		{
+			bots[i].Brain = (BasicBrain)system.Generation[(uint)i];
+		}
 	}
 }

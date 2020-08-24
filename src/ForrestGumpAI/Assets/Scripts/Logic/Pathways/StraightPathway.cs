@@ -43,12 +43,6 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 		set => transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, value / 10f);
 	}
 
-	private void Start()
-	{
-		Left.gameObject.GetComponent<Wall>().AgentDied += OnAgentExit;
-		Right.gameObject.GetComponent<Wall>().AgentDied += OnAgentExit;
-	}
-
 	public void SetDimension(float width = 1f, float depth = 1f)
 	{
 		transform.localScale = new Vector3(width / 10f, transform.localScale.y, depth / 10f);
@@ -69,17 +63,19 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 		if (other.CompareTag("Agent"))
 		{
 			++AgentsInside;
+			Agent.FromCollider(other).AgentPreDeath += OnAgentExit;
 		}
 	}
 	private void OnTriggerExit(Collider other)
 	{
 		if (other.CompareTag("Agent"))
 		{
-			OnAgentExit(null);
+			OnAgentExit(Agent.FromCollider(other));
 		}
 	}
-	private void OnAgentExit(Wall innerWall)
+	private void OnAgentExit(Agent agent)
 	{
+		agent.AgentPreDeath -= OnAgentExit;
 		--AgentsInside;
 		Dependency.Controller.DestructTerrain();
 	}

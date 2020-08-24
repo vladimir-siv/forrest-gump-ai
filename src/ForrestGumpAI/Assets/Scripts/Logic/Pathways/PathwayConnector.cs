@@ -91,14 +91,6 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 
 	private bool generated = false;
 
-	public void Start()
-	{
-		LeftEnter.GetComponent<Wall>().AgentDied += OnAgentExit;
-		RightEnter.GetComponent<Wall>().AgentDied += OnAgentExit;
-		LeftExit.GetComponent<Wall>().AgentDied += OnAgentExit;
-		RightExit.GetComponent<Wall>().AgentDied += OnAgentExit;
-	}
-
 	public void Adjust()
 	{
 		var rotation = Quaternion.Euler(0f, Angle, 0f);
@@ -179,17 +171,19 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 			}
 
 			++AgentsInside;
+			Agent.FromCollider(other).AgentPreDeath += OnAgentExit;
 		}
 	}
 	private void OnTriggerExit(Collider other)
 	{
 		if (other.CompareTag("Agent"))
 		{
-			OnAgentExit(null);
+			OnAgentExit(Agent.FromCollider(other));
 		}
 	}
-	private void OnAgentExit(Wall innerWall)
+	private void OnAgentExit(Agent agent)
 	{
+		agent.AgentPreDeath -= OnAgentExit;
 		--AgentsInside;
 		Dependency.Controller.DestructTerrain();
 	}

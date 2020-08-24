@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 using Random = UnityEngine.Random;
 
 public class Agent : MonoBehaviour, IPoolableObject
 {
+	private static readonly Dictionary<Collider, Agent> AgentColliders = new Dictionary<Collider, Agent>();
+	public static Agent FromCollider(Collider collider) => AgentColliders[collider];
+
 	[SerializeField] private float acceleration = 250f;
 	[SerializeField] private float velocity = 7.5f;
 	[SerializeField] private float rotationSpeed = 75f;
@@ -35,8 +39,13 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public bool CanSteer { get; private set; } = false;
 	public float BuiltVelocity { get; private set; } = 0f;
 
+	public const float MaxRayDistance = 100f;
+	public float[] RayValues { get; private set; } = new float[5];
+
 	public event Action<Agent> AgentPreDeath;
 	public event Action<Agent> AgentDeath;
+
+	private void Start() => AgentColliders.Add(GetComponent<CapsuleCollider>(), this);
 
 	public void OnConstruct()
 	{
@@ -48,6 +57,8 @@ public class Agent : MonoBehaviour, IPoolableObject
 			model.transform.SetParent(transform);
 			model.transform.localPosition = Vector3.zero;
 		}
+
+		for (var i = 0; i < RayValues.Length; ++i) RayValues[i] = 1f;
 
 		IsDead = false;
 		gameObject.SetActive(true);
@@ -105,10 +116,30 @@ public class Agent : MonoBehaviour, IPoolableObject
 		if (other.CompareTag("Wall")) Die();
 	}
 
-	// Human controls
 	private void FixedUpdate()
 	{
-		if (Input.GetKey(KeyCode.A)) Steer(-1);
-		if (Input.GetKey(KeyCode.D)) Steer(+1);
+		// Human controls
+		//if (Input.GetKey(KeyCode.A)) Steer(-1);
+		//if (Input.GetKey(KeyCode.D)) Steer(+1);
+
+		// AI raycaster
+		Vector3 direction(int i)
+		{
+			switch (i)
+			{
+				case 0: return -transform.right;
+				case 1: return (transform.forward - transform.right).normalized;
+				case 2: return transform.forward;
+				case 3: return (transform.forward + transform.right).normalized;
+				case 4: return transform.right;
+			}
+
+			return Vector3.forward;
+		}
+		for (var i = 0; i < RayValues.Length; ++i)
+		{
+			if (Physics.Raycast(transform.position, direction(i), out var hit, MaxRayDistance)) RayValues[i] = hit.distance / MaxRayDistance;
+			else RayValues[i] = 1f;
+		}
 	}
 }

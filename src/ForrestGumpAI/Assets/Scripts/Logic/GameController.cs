@@ -64,4 +64,5 @@ public class GameController : MonoBehaviour
 	}
 
 	private void FixedUpdate() => AIController.Loop();
+	private void OnApplicationQuit() => AIController.Cleanup();
 }

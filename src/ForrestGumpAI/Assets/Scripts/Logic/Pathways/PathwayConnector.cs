@@ -89,6 +89,16 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
+	private bool generated = false;
+
+	public void Start()
+	{
+		LeftEnter.GetComponent<Wall>().AgentDied += OnAgentExit;
+		RightEnter.GetComponent<Wall>().AgentDied += OnAgentExit;
+		LeftExit.GetComponent<Wall>().AgentDied += OnAgentExit;
+		RightExit.GetComponent<Wall>().AgentDied += OnAgentExit;
+	}
+
 	public void Adjust()
 	{
 		var rotation = Quaternion.Euler(0f, Angle, 0f);
@@ -121,6 +131,7 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 
 	public void OnConstruct()
 	{
+		generated = false;
 		gameObject.SetActive(true);
 	}
 
@@ -129,6 +140,34 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 		gameObject.SetActive(false);
 	}
 
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("Agent"))
+		{
+			if (!generated)
+			{
+				Dependency.Controller.GenerateTerrain();
+				generated = true;
+			}
+
+			++AgentsInside;
+		}
+	}
+	private void OnTriggerExit(Collider other)
+	{
+		if (other.CompareTag("Agent"))
+		{
+			OnAgentExit(null);
+		}
+	}
+	private void OnAgentExit(Wall innerWall)
+	{
+		--AgentsInside;
+		Dependency.Controller.DestructTerrain();
+	}
+
+	public int AgentsInside { get; private set; } = 0;
+	public IPathway Next { get; private set; } = null;
 	public void ConnectTo(Vector3 position, float rotation)
 	{
 		Enter.gameObject.SetActive(false);
@@ -137,11 +176,23 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 	}
 	public void ConnectOn(IPathway pathway)
 	{
-		var leftExitEnd = LeftExit.position + LeftExit.localScale.z * -LeftExit.right / 2f;
-		var rightExitEnd = RightExit.position + RightExit.localScale.z * -RightExit.right / 2f;
+		var leftExitEnd = LeftExit.position + LeftExit.localScale.z * LeftExit.forward / 2f;
+		var rightExitEnd = RightExit.position + RightExit.localScale.z * RightExit.forward / 2f;
 		var position = (leftExitEnd + rightExitEnd) / 2f;
+		position.y = 0f;
 		var rotation = Angle + transform.rotation.eulerAngles.y;
 		pathway.ConnectTo(position, rotation);
+		Next = pathway;
 	}
-	public void Destruct() => ObjectActivator.Destruct(this);
+	public void Disconnect()
+	{
+		Enter.gameObject.SetActive(true);
+	}
+	public void Destruct()
+	{
+		Next?.Disconnect();
+		Next = null;
+		AgentsInside = 0;
+		ObjectActivator.Destruct(this);
+	}
 }

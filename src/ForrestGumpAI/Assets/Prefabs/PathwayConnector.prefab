@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5485858234048257095}
   - component: {fileID: 5485858234048257088}
+  - component: {fileID: 8858489009553580220}
   m_Layer: 0
   m_Name: PathwayConnector
   m_TagString: Untagged
@@ -49,6 +50,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 301c3c7b2f6da5c4a95438069f8385c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &8858489009553580220
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5485858234048257089}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 22, y: 3, z: 11}
+  m_Center: {x: 0, y: 1.5, z: 0.5}
 --- !u!1 &8951185636232035226
 GameObject:
   m_ObjectHideFlags: 0

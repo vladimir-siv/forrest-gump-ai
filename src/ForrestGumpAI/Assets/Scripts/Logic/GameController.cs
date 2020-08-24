@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
 	[SerializeField] float SpawnRotation = 0f;
 
 	public int AgentsLeft { get; private set; }
-	private TerrainGenerator terrain = new TerrainGenerator();
+	private readonly TerrainGenerator terrain = new TerrainGenerator();
 
 	private void Start()
 	{
@@ -46,6 +46,16 @@ public class GameController : MonoBehaviour
 		yield return Timing.RagdollTimeout;
 		ObjectActivator.Destruct((Agent)agent);
 		if (AgentsLeft == 0) Restart();
+	}
+
+	public void GenerateTerrain()
+	{
+		terrain.Generate();
+		terrain.Generate();
+	}
+	public void DestructTerrain()
+	{
+		while (terrain.Remove()) ;
 	}
 
 	private void Update()

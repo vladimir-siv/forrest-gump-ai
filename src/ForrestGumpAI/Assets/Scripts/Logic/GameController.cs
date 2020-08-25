@@ -29,6 +29,9 @@ public class GameController : MonoBehaviour
 	{
 		var spawn = terrain.Begin(SpawnPoint, SpawnRotation);
 
+		terrain.Generate();
+		terrain.Generate();
+
 		for (var i = 0; i < Agents.Length; ++i)
 		{
 			Agents[i] = ObjectActivator.Construct<Agent>();

@@ -70,7 +70,7 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsAlive > exited;
+	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
 	public IPathway Next { get; private set; } = null;
 	public Vector3 ExitPoint => transform.position + Depth * transform.forward / 2f;
 	public void ConnectTo(Vector3 position, float rotation)

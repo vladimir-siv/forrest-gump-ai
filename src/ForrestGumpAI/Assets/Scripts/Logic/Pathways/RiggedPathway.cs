@@ -157,7 +157,7 @@ public class RiggedPathway : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsAlive > exited;
+	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
 	public IPathway Next { get; private set; } = null;
 	public Vector3 ExitPoint => transform.position + (Depth - 5f) * transform.forward;
 	public void ConnectTo(Vector3 position, float rotation)

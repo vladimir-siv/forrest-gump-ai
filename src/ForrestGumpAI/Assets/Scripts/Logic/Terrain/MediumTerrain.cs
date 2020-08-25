@@ -21,7 +21,8 @@ public class MediumTerrain : ITerrainGenerator
 			case 2:
 				var spread = ObjectActivator.Construct<SpreadPathway>();
 				spread.Scale = Random.Range(10f, 20f);
-				if (Mathf.Abs(connectorAngle) >= 15f) spread.Opened = SpreadPathway.Gate.North;
+				if (connectorAngle >= 25f) spread.Opened = (SpreadPathway.Gate)(int)Mathf.Pow(2, Random.Range(0, 2));
+				else if (connectorAngle <= -25f) spread.Opened = (SpreadPathway.Gate)(int)Mathf.Pow(2, Random.Range(1, 3));
 				else spread.Opened = (SpreadPathway.Gate)(int)Mathf.Pow(2, Random.Range(0, 3));
 				return spread;
 		}

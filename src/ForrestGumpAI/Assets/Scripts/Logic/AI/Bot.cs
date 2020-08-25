@@ -51,9 +51,11 @@ public class Bot
 
 		var pathway = agent.CurrentPathway.GetComponent<IPathway>();
 		var distance = Vector3.Distance(agent.transform.position, pathway.ExitPoint);
+		var progress = EvolutionTracker.Progress();
+		var decay = agent.PathwaysEncountered * 10f;
 
-		var reward = Mathf.Pow(EvolutionTracker.Progress() / .17e2f, 4f);
-		var penalty = Mathf.Pow(distance / .74e2f, 4f);
+		var reward = Mathf.Pow(progress / .17e2f, 4f);
+		var penalty = Mathf.Pow(distance / .24e3f, 4f) * decay;
 
 		Brain.EvolutionValue = Mathf.Max(reward - penalty, float.Epsilon);
 	}

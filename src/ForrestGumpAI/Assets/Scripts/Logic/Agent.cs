@@ -41,7 +41,8 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public event Action<Agent> AgentPreDeath;
 	public event Action<Agent> AgentDeath;
 
-	public Collider CurrentPathway;
+	public Collider CurrentPathway { get; private set; } = null;
+	public int PathwaysEncountered { get; private set; } = 0;
 
 	public void OnConstruct()
 	{
@@ -57,6 +58,8 @@ public class Agent : MonoBehaviour, IPoolableObject
 		for (var i = 0; i < RayValues.Length; ++i) RayValues[i] = 1f;
 
 		IsDead = false;
+		CurrentPathway = null;
+		PathwaysEncountered = 0;
 		gameObject.SetActive(true);
 	}
 	public void OnDestruct()
@@ -109,8 +112,15 @@ public class Agent : MonoBehaviour, IPoolableObject
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.CompareTag("Wall")) Die();
-		if (other.CompareTag("Pathway")) CurrentPathway = other;
+		if (other.CompareTag("Wall"))
+		{
+			Die();
+		}
+		else if (other.CompareTag("Pathway"))
+		{
+			++PathwaysEncountered;
+			CurrentPathway = other;
+		}
 	}
 
 	private void FixedUpdate()

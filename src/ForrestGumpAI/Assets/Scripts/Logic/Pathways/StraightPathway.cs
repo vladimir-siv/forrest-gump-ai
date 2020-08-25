@@ -43,6 +43,8 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 		set => transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, value / 10f);
 	}
 
+	private int exited = 0;
+
 	public void SetDimension(float width = 1f, float depth = 1f)
 	{
 		transform.localScale = new Vector3(width / 10f, transform.localScale.y, depth / 10f);
@@ -50,6 +52,7 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 
 	public void OnConstruct()
 	{
+		exited = 0;
 		gameObject.SetActive(true);
 	}
 
@@ -58,29 +61,16 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 		gameObject.SetActive(false);
 	}
 
-	private void OnTriggerEnter(Collider other)
-	{
-		if (other.CompareTag("Agent"))
-		{
-			++AgentsInside;
-			Agent.FromCollider(other).AgentPreDeath += OnAgentExit;
-		}
-	}
 	private void OnTriggerExit(Collider other)
 	{
 		if (other.CompareTag("Agent"))
 		{
-			OnAgentExit(Agent.FromCollider(other));
+			++exited;
+			Dependency.Controller.DestructTerrain();
 		}
 	}
-	private void OnAgentExit(Agent agent)
-	{
-		agent.AgentPreDeath -= OnAgentExit;
-		--AgentsInside;
-		Dependency.Controller.DestructTerrain();
-	}
 
-	public int AgentsInside { get; private set; } = 0;
+	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
 	public IPathway Next { get; private set; } = null;
 	public void ConnectTo(Vector3 position, float rotation)
 	{
@@ -103,7 +93,6 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 	{
 		Next?.Disconnect();
 		Next = null;
-		AgentsInside = 0;
 		ObjectActivator.Destruct(this);
 	}
 }

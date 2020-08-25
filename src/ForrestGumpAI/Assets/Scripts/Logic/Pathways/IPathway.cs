@@ -2,7 +2,7 @@
 
 public interface IPathway
 {
-	int AgentsInside { get; }
+	bool WaitingOnAgents { get; }
 	IPathway Next { get; }
 	void ConnectTo(Vector3 position, float rotation);
 	void ConnectOn(IPathway pathway);

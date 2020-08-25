@@ -89,7 +89,8 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	private bool generated = false;
+	private bool firstEntered = false;
+	private int exited = 0;
 
 	public void Adjust()
 	{
@@ -151,7 +152,8 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 
 	public void OnConstruct()
 	{
-		generated = false;
+		firstEntered = false;
+		exited = 0;
 		gameObject.SetActive(true);
 	}
 
@@ -164,31 +166,23 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 	{
 		if (other.CompareTag("Agent"))
 		{
-			if (!generated)
+			if (!firstEntered)
 			{
+				firstEntered = true;
 				Dependency.Controller.GenerateTerrain();
-				generated = true;
 			}
-
-			++AgentsInside;
-			Agent.FromCollider(other).AgentPreDeath += OnAgentExit;
 		}
 	}
 	private void OnTriggerExit(Collider other)
 	{
 		if (other.CompareTag("Agent"))
 		{
-			OnAgentExit(Agent.FromCollider(other));
+			++exited;
+			Dependency.Controller.DestructTerrain();
 		}
 	}
-	private void OnAgentExit(Agent agent)
-	{
-		agent.AgentPreDeath -= OnAgentExit;
-		--AgentsInside;
-		Dependency.Controller.DestructTerrain();
-	}
 
-	public int AgentsInside { get; private set; } = 0;
+	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
 	public IPathway Next { get; private set; } = null;
 	public void ConnectTo(Vector3 position, float rotation)
 	{
@@ -214,7 +208,6 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 	{
 		Next?.Disconnect();
 		Next = null;
-		AgentsInside = 0;
 		ObjectActivator.Destruct(this);
 	}
 }

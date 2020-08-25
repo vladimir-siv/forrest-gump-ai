@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 using Random = UnityEngine.Random;
 
 public class Agent : MonoBehaviour, IPoolableObject
 {
-	private static readonly Dictionary<Collider, Agent> AgentColliders = new Dictionary<Collider, Agent>();
-	public static Agent FromCollider(Collider collider) => AgentColliders[collider];
-
 	[SerializeField] private float acceleration = 250f;
 	[SerializeField] private float velocity = 7.5f;
 	[SerializeField] private float rotationSpeed = 75f;
@@ -44,8 +40,6 @@ public class Agent : MonoBehaviour, IPoolableObject
 
 	public event Action<Agent> AgentPreDeath;
 	public event Action<Agent> AgentDeath;
-
-	private void Start() => AgentColliders.Add(GetComponent<CapsuleCollider>(), this);
 
 	public void OnConstruct()
 	{

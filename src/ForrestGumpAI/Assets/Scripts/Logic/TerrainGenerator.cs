@@ -51,7 +51,7 @@ public class TerrainGenerator
 	{
 		if (pathways.Count == 0) return false;
 		var front = Peek();
-		if (front.AgentsInside != 0) return false;
+		if (front.WaitingOnAgents) return false;
 		Dequeue();
 		front.Destruct();
 		return true;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-public interface ITerrainGenerator
+﻿public interface ITerrainGenerator
 {
-	IPathway Generate();
+	IPathway Generate(float connectorAngle);
 }

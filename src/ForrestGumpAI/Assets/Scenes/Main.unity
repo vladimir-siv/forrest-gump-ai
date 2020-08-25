@@ -457,8 +457,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 15, z: 0}
+  m_LocalRotation: {x: 0.69291145, y: 0.14097439, z: -0.14097439, w: 0.69291145}
+  m_LocalPosition: {x: 13, y: 30, z: 17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -524,6 +524,7 @@ MonoBehaviour:
   PathwayConnectorPrototype: {fileID: 5485858234048257089, guid: d0d206e2eb03a94418e12d596e3986ed, type: 3}
   StraightPathwayPrototype: {fileID: 8167584340869304622, guid: d00365c01912ac748af7c2f4efe413ee, type: 3}
   RiggedPathwayPrototype: {fileID: 8167584340869304622, guid: fe70f1e3f26349e479c1eac041c569cd, type: 3}
+  SpreadPathwayPrototype: {fileID: 8167584340869304622, guid: 04398f074c43af544be0710b8ac82bf3, type: 3}
   AgentPrototype: {fileID: 2053639975970049271, guid: a4f5b0dbbe1f7e041b9aa40314bdbb7f, type: 3}
   AgentModels:
   - {fileID: 8588459379381067129, guid: 01957471a57a70f47abc5633a1fd6a56, type: 3}

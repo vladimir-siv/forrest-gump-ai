@@ -35,7 +35,8 @@ public class TerrainGenerator
 
 		if (last is PathwayConnector)
 		{
-			pathway = generator.Generate();
+			var connectorAngle = ((PathwayConnector)last).Angle;
+			pathway = generator.Generate(connectorAngle);
 		}
 		else
 		{

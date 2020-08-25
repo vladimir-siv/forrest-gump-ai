@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
 	public GameObject PathwayConnectorPrototype = null;
 	public GameObject StraightPathwayPrototype = null;
 	public GameObject RiggedPathwayPrototype = null;
+	public GameObject SpreadPathwayPrototype = null;
 	public GameObject AgentPrototype = null;
 	public GameObject[] AgentModels = null;
 	public Agent[] Agents = null;
@@ -22,7 +23,6 @@ public class GameController : MonoBehaviour
 
 	private void Start()
 	{
-		//Random.InitState(6326); - Map seed
 		Dependency.Create(this);
 		AIController.Setup();
 		Restart();

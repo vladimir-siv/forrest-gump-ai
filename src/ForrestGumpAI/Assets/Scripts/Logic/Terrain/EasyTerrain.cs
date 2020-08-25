@@ -6,7 +6,7 @@ public class EasyTerrain : ITerrainGenerator
 
 	private EasyTerrain() { }
 
-	public IPathway Generate()
+	public IPathway Generate(float connectorAngle)
 	{
 		var straight = ObjectActivator.Construct<StraightPathway>();
 		straight.SetDimension(5f, Random.Range(10f, 20f));

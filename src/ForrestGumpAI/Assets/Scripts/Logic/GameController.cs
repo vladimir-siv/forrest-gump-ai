@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
 	public GameObject WallPrototype = null;
 	public GameObject PathwayConnectorPrototype = null;
 	public GameObject StraightPathwayPrototype = null;
+	public GameObject RiggedPathwayPrototype = null;
 	public GameObject AgentPrototype = null;
 	public GameObject[] AgentModels = null;
 	public Agent[] Agents = null;
@@ -17,7 +18,7 @@ public class GameController : MonoBehaviour
 
 	public int AgentsAlive { get; private set; }
 	public int AgentsLeft { get; private set; }
-	private readonly TerrainGenerator terrain = new TerrainGenerator();
+	private readonly TerrainGenerator terrain = new TerrainGenerator(Terrains.Medium);
 
 	private void Start()
 	{

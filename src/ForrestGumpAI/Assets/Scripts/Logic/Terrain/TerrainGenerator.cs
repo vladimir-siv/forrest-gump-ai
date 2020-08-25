@@ -9,7 +9,9 @@ public class TerrainGenerator
 	private IPathway Peek() => pathways.First.Value;
 	private IPathway Last() => pathways.Last.Value;
 
-	public TerrainGenerator() { }
+	private readonly ITerrainGenerator generator = null;
+
+	public TerrainGenerator(ITerrainGenerator generator) => this.generator = generator;
 
 	public PathwayConnector Begin() => Begin(Vector3.zero, 0f);
 	public PathwayConnector Begin(Vector3 spawnPoint, float spawnRotation)
@@ -33,9 +35,7 @@ public class TerrainGenerator
 
 		if (last is PathwayConnector)
 		{
-			var straight = ObjectActivator.Construct<StraightPathway>();
-			straight.SetDimension(5f, Random.Range(10f, 20f));
-			pathway = straight;
+			pathway = generator.Generate();
 		}
 		else
 		{

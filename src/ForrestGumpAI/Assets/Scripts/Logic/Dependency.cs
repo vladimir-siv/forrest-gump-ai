@@ -12,6 +12,7 @@
 		ObjectActivator.CreatePool<Wall>(Controller.WallPrototype);
 		ObjectActivator.CreatePool<PathwayConnector>(Controller.PathwayConnectorPrototype);
 		ObjectActivator.CreatePool<StraightPathway>(Controller.StraightPathwayPrototype);
+		ObjectActivator.CreatePool<RiggedPathway>(Controller.RiggedPathwayPrototype);
 	}
 
 	public static void Create(GameController controller)

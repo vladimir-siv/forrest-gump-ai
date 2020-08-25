@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 5499270607724002956}
   - component: {fileID: 3983913130168847784}
   - component: {fileID: 5349231819991219046}
-  - component: {fileID: 33560848012709352}
   - component: {fileID: 8068510321579640136}
+  - component: {fileID: 33560848012709352}
   m_Layer: 0
   m_Name: StraightPathway
-  m_TagString: Untagged
+  m_TagString: Pathway
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86,18 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &33560848012709352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8167584340869304622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e65c73512c3cd67458792fb53345c90c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &8068510321579640136
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -111,6 +99,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 3, z: 15}
   m_Center: {x: 0, y: 1.5, z: 2.5}
+--- !u!114 &33560848012709352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8167584340869304622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e65c73512c3cd67458792fb53345c90c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2497392297363954954
 PrefabInstance:
   m_ObjectHideFlags: 0

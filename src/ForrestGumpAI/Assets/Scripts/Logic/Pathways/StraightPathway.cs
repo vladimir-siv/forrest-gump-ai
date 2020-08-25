@@ -72,6 +72,7 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 
 	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsAlive > exited;
 	public IPathway Next { get; private set; } = null;
+	public Vector3 ExitPoint => transform.position + Depth * transform.forward / 2f;
 	public void ConnectTo(Vector3 position, float rotation)
 	{
 		Back.gameObject.SetActive(false);
@@ -80,9 +81,8 @@ public class StraightPathway : MonoBehaviour, IPathway, IPoolableObject
 	}
 	public void ConnectOn(IPathway pathway)
 	{
-		var position = transform.position + Depth * transform.forward / 2f;
 		var rotation = transform.rotation.eulerAngles.y;
-		pathway.ConnectTo(position, rotation);
+		pathway.ConnectTo(ExitPoint, rotation);
 		Next = pathway;
 	}
 	public void Disconnect()

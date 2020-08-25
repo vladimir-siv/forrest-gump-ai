@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - Agent
+  - Pathway
   layers:
   - Default
   - TransparentFX

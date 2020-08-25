@@ -184,6 +184,17 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 
 	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsAlive > exited;
 	public IPathway Next { get; private set; } = null;
+	public Vector3 ExitPoint
+	{
+		get
+		{
+			var leftExitEnd = LeftExit.position + LeftExit.localScale.z * LeftExit.forward / 2f;
+			var rightExitEnd = RightExit.position + RightExit.localScale.z * RightExit.forward / 2f;
+			var position = (leftExitEnd + rightExitEnd) / 2f;
+			position.y = 0f;
+			return position;
+		}
+	}
 	public void ConnectTo(Vector3 position, float rotation)
 	{
 		Enter.gameObject.SetActive(false);
@@ -192,12 +203,8 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 	}
 	public void ConnectOn(IPathway pathway)
 	{
-		var leftExitEnd = LeftExit.position + LeftExit.localScale.z * LeftExit.forward / 2f;
-		var rightExitEnd = RightExit.position + RightExit.localScale.z * RightExit.forward / 2f;
-		var position = (leftExitEnd + rightExitEnd) / 2f;
-		position.y = 0f;
 		var rotation = Angle + transform.rotation.eulerAngles.y;
-		pathway.ConnectTo(position, rotation);
+		pathway.ConnectTo(ExitPoint, rotation);
 		Next = pathway;
 	}
 	public void Disconnect()

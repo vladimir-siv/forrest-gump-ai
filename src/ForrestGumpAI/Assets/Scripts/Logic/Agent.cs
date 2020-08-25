@@ -41,6 +41,8 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public event Action<Agent> AgentPreDeath;
 	public event Action<Agent> AgentDeath;
 
+	public Collider CurrentPathway;
+
 	public void OnConstruct()
 	{
 		if (transform.childCount == 0)
@@ -108,6 +110,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 	private void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("Wall")) Die();
+		if (other.CompareTag("Pathway")) CurrentPathway = other;
 	}
 
 	private void FixedUpdate()

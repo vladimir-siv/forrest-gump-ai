@@ -289,6 +289,22 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 
 	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsAlive > exited;
 	public IPathway Next { get; private set; } = null;
+	public Vector3 ExitPoint
+	{
+		get
+		{
+			var direction = Vector3.zero;
+
+			switch (Opened)
+			{
+				case Gate.West: direction = -transform.right; break;
+				case Gate.North: direction = transform.forward; break;
+				case Gate.East: direction = transform.right; break;
+			}
+
+			return transform.position + Scale * direction / 2f;
+		}
+	}
 	public void ConnectTo(Vector3 position, float rotation)
 	{
 		Back.gameObject.SetActive(false);
@@ -307,11 +323,11 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 				anglecorrection = -90f;
 				break;
 			case Gate.North:
-				direction =  transform.forward;
+				direction = transform.forward;
 				anglecorrection = 0f;
 				break;
 			case Gate.East:
-				direction =  transform.right;
+				direction = transform.right;
 				anglecorrection = +90f;
 				break;
 		}

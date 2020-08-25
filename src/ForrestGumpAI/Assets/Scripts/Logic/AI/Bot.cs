@@ -48,6 +48,13 @@ public class Bot
 	{
 		if (agent != Agent) return;
 		Agent = null;
-		Brain.EvolutionValue = float.Epsilon + Mathf.Pow(EvolutionTracker.Progress() / 3.14e2f, 4f);
+
+		var pathway = agent.CurrentPathway.GetComponent<IPathway>();
+		var distance = Vector3.Distance(agent.transform.position, pathway.ExitPoint);
+
+		var reward = Mathf.Pow(EvolutionTracker.Progress() / .17e2f, 4f);
+		var penalty = Mathf.Pow(distance / .74e2f, 4f);
+
+		Brain.EvolutionValue = Mathf.Max(reward - penalty, float.Epsilon);
 	}
 }

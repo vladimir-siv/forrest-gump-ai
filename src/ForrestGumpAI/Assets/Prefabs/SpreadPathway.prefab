@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 572914684903154675}
   m_Layer: 0
   m_Name: SpreadPathway
-  m_TagString: Untagged
+  m_TagString: Pathway
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

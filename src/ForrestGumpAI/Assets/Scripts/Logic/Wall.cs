@@ -2,6 +2,16 @@
 
 public class Wall : MonoBehaviour, IPoolableObject
 {
+	private static int mask = -1;
+	public static int Mask
+	{
+		get
+		{
+			if (mask < 0) mask = LayerMask.NameToLayer("Walls");
+			return mask;
+		}
+	}
+
 	public void OnConstruct()
 	{
 		gameObject.SetActive(true);

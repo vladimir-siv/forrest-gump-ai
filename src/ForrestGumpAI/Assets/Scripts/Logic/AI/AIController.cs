@@ -46,7 +46,7 @@ public static class AIController
 			Selection.RandFit(1u),
 			BasicBrain.Mating(first.Size, ((BasicBrain)first[0u]).NeuralNetwork.Params),
 			generations: 1000u,
-			mutation: 25.0f
+			mutation: 15.0f
 		);
 	}
 
@@ -65,7 +65,7 @@ public static class AIController
 	{
 		for (var i = 0; i < agents.Length; ++i)
 		{
-			bots[i].Agent = agents[i];
+			bots[i].Init(agents[i]);
 		}
 
 		EvolutionTracker.Begin();

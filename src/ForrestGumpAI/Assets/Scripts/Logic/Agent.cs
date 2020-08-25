@@ -39,7 +39,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public bool CanSteer { get; private set; } = false;
 	public float BuiltVelocity { get; private set; } = 0f;
 
-	public const float MaxRayDistance = 100f;
+	public const float MaxRayDistance = 10f;
 	public float[] RayValues { get; private set; } = new float[5];
 
 	public event Action<Agent> AgentPreDeath;
@@ -123,6 +123,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 		//if (Input.GetKey(KeyCode.D)) Steer(+1);
 
 		// AI raycaster
+		if (IsDead) return;
 		Vector3 direction(int i)
 		{
 			switch (i)
@@ -138,7 +139,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 		}
 		for (var i = 0; i < RayValues.Length; ++i)
 		{
-			if (Physics.Raycast(transform.position, direction(i), out var hit, MaxRayDistance)) RayValues[i] = hit.distance / MaxRayDistance;
+			if (Physics.Raycast(transform.position, direction(i), out var hit, MaxRayDistance, ~Wall.Mask)) RayValues[i] = hit.distance / MaxRayDistance;
 			else RayValues[i] = 1f;
 		}
 	}

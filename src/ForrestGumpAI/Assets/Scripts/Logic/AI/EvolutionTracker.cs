@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 public static class EvolutionTracker
 {
@@ -12,7 +11,6 @@ public static class EvolutionTracker
 
 	public static float Progress()
 	{
-		var time = (float)(DateTime.Now - StartTime).TotalSeconds;
-		return Mathf.Pow(time / 100f, 4f);
+		return (float)(DateTime.Now - StartTime).TotalSeconds;
 	}
 }

@@ -39,7 +39,7 @@ public class CameraController : MonoBehaviour
 				break;
 			case CameraMode.BirdPerspective:
 				transform.position = Following.transform.position + 15f * Following.transform.up;
-				transform.rotation = Quaternion.Euler(90f, Following.transform.rotation.eulerAngles.y, 0f);
+				transform.rotation = Quaternion.Euler(90f, 0f, 0f); // Quaternion.Euler(90f, Following.transform.rotation.eulerAngles.y, 0f);
 				break;
 		}
 	}

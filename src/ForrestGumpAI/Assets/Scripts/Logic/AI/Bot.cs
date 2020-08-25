@@ -1,37 +1,12 @@
-﻿using GrandIntelligence;
+﻿using UnityEngine;
+using GrandIntelligence;
 
 public class Bot
 {
 	private readonly float[] outputs = new float[3];
 
-	private Agent agent = null;
-	public Agent Agent
-	{
-		get
-		{
-			return agent;
-		}
-		set
-		{
-			if (value == agent) return;
-			agent = value;
-			if (agent == null) return;
-			agent.AgentPreDeath += AgentDeath;
-		}
-	}
-
-	private BasicBrain brain = null;
-	public BasicBrain Brain
-	{
-		get
-		{
-			return brain;
-		}
-		set
-		{
-			brain = value;
-		}
-	}
+	public Agent Agent { get; private set; } = null;
+	public BasicBrain Brain { get; set; } = null;
 
 	public Bot()
 	{
@@ -51,6 +26,12 @@ public class Bot
 		}
 	}
 
+	public void Init(Agent agent)
+	{
+		Agent = agent;
+		agent.AgentPreDeath += AgentDeath;
+	}
+
 	public void Think()
 	{
 		if (Agent == null) return;
@@ -67,6 +48,6 @@ public class Bot
 	{
 		if (agent != Agent) return;
 		Agent = null;
-		Brain.EvolutionValue = EvolutionTracker.Progress();
+		Brain.EvolutionValue = float.Epsilon + Mathf.Pow(EvolutionTracker.Progress() / 3.14e2f, 4f);
 	}
 }

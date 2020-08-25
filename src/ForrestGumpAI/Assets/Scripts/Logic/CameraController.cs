@@ -4,24 +4,29 @@ public class CameraController : MonoBehaviour
 {
 	[SerializeField] private CameraMode Mode = CameraMode.ThirdPerson;
 
-	public Agent Following { get; set; }
+	public Agent Following { get; private set; }
+	public int FollowingIndex { get; private set; }
 
 	private void Update()
 	{
+		var xPressed = Input.GetKeyDown(KeyCode.X);
+
 		if (Input.GetKeyDown(KeyCode.C))
 		{
 			if (Mode == CameraMode.ThirdPerson) Mode = CameraMode.BirdPerspective;
 			else Mode = CameraMode.ThirdPerson;
 		}
 
-		if (Input.GetKeyDown(KeyCode.X) || Following == null || Following.IsDead)
+		if ((Dependency.Controller.AgentsLeft > 0) && (xPressed || Following == null || Following.IsDead))
 		{
 			var agents = Dependency.Controller.Agents;
 
-			for (var i = 0; i < agents.Length; ++i)
+			if (xPressed) FollowingIndex = (FollowingIndex + 1) % agents.Length;
+
+			for (var i = 0; i < agents.Length; FollowingIndex = (FollowingIndex + 1) % agents.Length, ++i)
 			{
-				if (agents[i] == null || agents[i].IsDead) continue;
-				Following = agents[i];
+				if (agents[FollowingIndex] == null || agents[FollowingIndex].IsDead) continue;
+				Following = agents[FollowingIndex];
 				break;
 			}
 		}

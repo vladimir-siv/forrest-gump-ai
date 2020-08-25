@@ -17,7 +17,7 @@ public class CameraController : MonoBehaviour
 			else Mode = CameraMode.ThirdPerson;
 		}
 
-		if ((Dependency.Controller.AgentsLeft > 0) && (xPressed || Following == null || Following.IsDead))
+		if ((Dependency.Controller.AgentsAlive > 0) && (xPressed || Following == null || Following.IsDead))
 		{
 			var agents = Dependency.Controller.Agents;
 

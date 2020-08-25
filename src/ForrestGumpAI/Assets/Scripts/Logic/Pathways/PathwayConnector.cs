@@ -182,7 +182,7 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
+	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsAlive > exited;
 	public IPathway Next { get; private set; } = null;
 	public void ConnectTo(Vector3 position, float rotation)
 	{

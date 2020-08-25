@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
 	[SerializeField] float SpawnRotation = 0f;
 	[SerializeField] Text GenerationDisplay = null;
 
+	public int AgentsAlive { get; private set; }
 	public int AgentsLeft { get; private set; }
 	private readonly TerrainGenerator terrain = new TerrainGenerator();
 
@@ -41,16 +42,20 @@ public class GameController : MonoBehaviour
 			Agents[i].Run();
 		}
 
-		AgentsLeft = Agents.Length;
-
+		AgentsAlive = AgentsLeft = Agents.Length;
+		
 		AIController.CycleBegin();
 
-		GenerationDisplay.text = $"Generation: {AIController.Generation:0000}";
+		UpdateDisplay();
 	}
 
 	private IEnumerator AgentDeath(object agent)
 	{
+		--AgentsAlive;
+		UpdateDisplay();
+
 		yield return Timing.RagdollTimeout;
+
 		ObjectActivator.Destruct((Agent)agent);
 		
 		if (--AgentsLeft == 0)
@@ -72,4 +77,9 @@ public class GameController : MonoBehaviour
 
 	private void FixedUpdate() => AIController.Loop();
 	private void OnApplicationQuit() => AIController.Cleanup();
+
+	private void UpdateDisplay()
+	{
+		GenerationDisplay.text = $"Generation:\t{AIController.Generation:0000}\nAgents alive:\t{AgentsAlive:0000}";
+	}
 }

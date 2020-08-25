@@ -768,7 +768,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 220, y: 30}
+  m_SizeDelta: {x: 220, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1677277308
 MonoBehaviour:
@@ -803,7 +803,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Generation: 0000'
+  m_Text: "Generation:\t0000\nAgents alive:\t0000"
 --- !u!222 &1677277309
 CanvasRenderer:
   m_ObjectHideFlags: 0

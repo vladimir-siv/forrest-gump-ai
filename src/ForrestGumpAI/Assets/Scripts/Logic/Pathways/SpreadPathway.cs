@@ -171,12 +171,52 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
+	private Transform _southWestMiddle = null;
+	public Transform SouthWestMiddle
+	{
+		get
+		{
+			if (_southWestMiddle == null) _southWestMiddle = transform.GetChild(16);
+			return _southWestMiddle;
+		}
+	}
+
+	private Transform _northWestMiddle = null;
+	public Transform NorthWestMiddle
+	{
+		get
+		{
+			if (_northWestMiddle == null) _northWestMiddle = transform.GetChild(17);
+			return _northWestMiddle;
+		}
+	}
+
+	private Transform _northEastMiddle = null;
+	public Transform NorthEastMiddle
+	{
+		get
+		{
+			if (_northEastMiddle == null) _northEastMiddle = transform.GetChild(18);
+			return _northEastMiddle;
+		}
+	}
+
+	private Transform _southEastMiddle = null;
+	public Transform SouthEastMiddle
+	{
+		get
+		{
+			if (_southEastMiddle == null) _southEastMiddle = transform.GetChild(19);
+			return _southEastMiddle;
+		}
+	}
+
 	private Transform _ground = null;
 	public Transform Ground
 	{
 		get
 		{
-			if (_ground == null) _ground = transform.GetChild(16);
+			if (_ground == null) _ground = transform.GetChild(20);
 			return _ground;
 		}
 	}
@@ -209,6 +249,25 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 			Collider.size = new Vector3(scale + 5f, 3f, scale + 5f);
 
 			AdjustWalls();
+		}
+	}
+
+	private bool middleWalls = false;
+	public bool MiddleWalls
+	{
+		get
+		{
+			return middleWalls;
+		}
+		set
+		{
+			if (value == middleWalls) return;
+			middleWalls = value;
+
+			SouthWestMiddle.gameObject.SetActive(middleWalls);
+			NorthWestMiddle.gameObject.SetActive(middleWalls);
+			NorthEastMiddle.gameObject.SetActive(middleWalls);
+			SouthEastMiddle.gameObject.SetActive(middleWalls);
 		}
 	}
 
@@ -246,6 +305,8 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 		var halfScale = Scale / 2f;
 		var innerScale = Constants.SQRT2 * (halfScale - 4.5f);
 		var innerPush = Constants.SQRT2 * (halfScale + 0.5f) / 2f;
+		var middleScale = Constants.SQRT2 * Scale / 10f;
+		var middlePush = middleScale / 2f;
 
 		LeftEnter     .localPosition = LeftEnter     .localForward() * (halfScale - 1f) + LeftEnter     .localUp() * LeftEnter     .localScale.y / 2f - LeftEnter     .localRight() * 2.5f;
 		RightEnter    .localPosition = RightEnter    .localForward() * (halfScale - 1f) + RightEnter    .localUp() * RightEnter    .localScale.y / 2f + RightEnter    .localRight() * 2.5f;
@@ -270,6 +331,16 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 		NorthEast.localPosition = NorthEast.localForward() * innerPush + NorthEast.localUp() * NorthEast.localScale.y / 2f;
 		NorthWest.localPosition = NorthWest.localForward() * innerPush + NorthWest.localUp() * NorthWest.localScale.y / 2f;
 		SouthWest.localPosition = SouthWest.localForward() * innerPush + SouthWest.localUp() * SouthWest.localScale.y / 2f;
+
+		SouthEastMiddle.RescaleX(middleScale);
+		NorthEastMiddle.RescaleX(middleScale);
+		NorthWestMiddle.RescaleX(middleScale);
+		SouthWestMiddle.RescaleX(middleScale);
+
+		SouthEastMiddle.localPosition = SouthEastMiddle.localForward() * middlePush + SouthEastMiddle.localUp() * SouthEastMiddle.localScale.y / 2f;
+		NorthEastMiddle.localPosition = NorthEastMiddle.localForward() * middlePush + NorthEastMiddle.localUp() * NorthEastMiddle.localScale.y / 2f;
+		NorthWestMiddle.localPosition = NorthWestMiddle.localForward() * middlePush + NorthWestMiddle.localUp() * NorthWestMiddle.localScale.y / 2f;
+		SouthWestMiddle.localPosition = SouthWestMiddle.localForward() * middlePush + SouthWestMiddle.localUp() * SouthWestMiddle.localScale.y / 2f;
 	}
 	public void AdjustGates()
 	{

@@ -77,7 +77,8 @@ public class GameController : MonoBehaviour
 	}
 
 #if AI_PLAYER
-	private void FixedUpdate() => AIController.Loop();
+	private void Update() => AIController.Loop();
+	private void FixedUpdate() => AIController.FixedLoop();
 #endif
 
 	private void OnApplicationQuit() => AIController.Cleanup();

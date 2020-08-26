@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using GrandIntelligence;
 
 public class Bot
@@ -34,6 +35,7 @@ public class Bot
 	public Agent Agent { get; private set; } = null;
 	public BasicBrain Brain { get; set; } = null;
 
+	public Bot(BasicBrain brain) => Brain = brain ?? throw new ArgumentNullException(nameof(brain));
 	public Bot()
 	{
 		Brain = new BasicBrain(BrainPrototype);

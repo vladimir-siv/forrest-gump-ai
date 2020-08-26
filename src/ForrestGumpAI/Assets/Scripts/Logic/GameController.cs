@@ -13,16 +13,26 @@ public class GameController : MonoBehaviour
 	public GameObject[] AgentModels = null;
 	public Agent[] Agents = null;
 
-	[SerializeField] Vector3 SpawnPoint = Vector3.zero;
-	[SerializeField] float SpawnRotation = 0f;
-	[SerializeField] Text GenerationDisplay = null;
+	[SerializeField] private Vector3 SpawnPoint = Vector3.zero;
+	[SerializeField] private float SpawnRotation = 0f;
+	[SerializeField] private Text GenerationDisplay = null;
+	[SerializeField] private uint TerrainLevel = 0u;
 
 	public int AgentsAlive { get; private set; }
 	public int AgentsLeft { get; private set; }
-	private readonly TerrainGenerator terrain = TerrainGenerator.Medium;
+
+	private TerrainGenerator terrain = null;
 
 	private void Start()
 	{
+		switch (TerrainLevel)
+		{
+			case 0u: terrain = TerrainGenerator.Easy; break;
+			case 1u: terrain = TerrainGenerator.Medium; break;
+			case 2u: terrain = TerrainGenerator.Hard; break;
+			default: terrain = TerrainGenerator.Medium; break;
+		}
+
 		Dependency.Create(this);
 		AIController.Setup();
 		Restart();

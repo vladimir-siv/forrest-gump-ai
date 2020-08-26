@@ -6,23 +6,7 @@ public static class AIController
 	private static Bot[] bots = null;
 
 	private static DarwinBgea system = null;
-	private static NeuralBuilder prototype = null;
 
-	public static NeuralBuilder BrainPrototype
-	{
-		get
-		{
-			if (prototype == null)
-			{
-				prototype = new NeuralBuilder(5u);
-				prototype.FCLayer(8u, ActivationFunction.ELU);
-				prototype.FCLayer(4u, ActivationFunction.ELU);
-				prototype.FCLayer(3u, ActivationFunction.Sigmoid);
-			}
-
-			return prototype;
-		}
-	}
 	public static uint Generation => system?.CurrentGeneration ?? 0u;
 
 	public static void Setup()
@@ -52,11 +36,10 @@ public static class AIController
 
 	public static void Cleanup()
 	{
-		prototype?.Dispose();
-		prototype = null;
-
 		system?.Dispose();
 		system = null;
+
+		Bot.BrainPrototype = null;
 
 		GICore.Release();
 	}

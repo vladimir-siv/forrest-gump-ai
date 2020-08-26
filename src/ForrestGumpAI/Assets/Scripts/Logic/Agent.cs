@@ -35,9 +35,6 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public bool CanSteer { get; private set; } = false;
 	public float BuiltVelocity { get; private set; } = 0f;
 
-	public const float MaxRayDistance = 10f;
-	public float[] RayValues { get; private set; } = new float[5];
-
 	public event Action<Agent> AgentPreDeath;
 	public event Action<Agent> AgentDeath;
 
@@ -54,8 +51,6 @@ public class Agent : MonoBehaviour, IPoolableObject
 			model.transform.SetParent(transform);
 			model.transform.localPosition = Vector3.zero;
 		}
-
-		for (var i = 0; i < RayValues.Length; ++i) RayValues[i] = 1f;
 
 		IsDead = false;
 		CurrentPathway = null;
@@ -123,31 +118,10 @@ public class Agent : MonoBehaviour, IPoolableObject
 		}
 	}
 
-	private void FixedUpdate()
-	{
-		// Human controls
-		//if (Input.GetKey(KeyCode.A)) Steer(-1);
-		//if (Input.GetKey(KeyCode.D)) Steer(+1);
-
-		// AI raycaster
-		if (IsDead) return;
-		Vector3 direction(int i)
-		{
-			switch (i)
-			{
-				case 0: return -transform.right;
-				case 1: return (transform.forward - transform.right).normalized;
-				case 2: return transform.forward;
-				case 3: return (transform.forward + transform.right).normalized;
-				case 4: return transform.right;
-			}
-
-			return Vector3.forward;
-		}
-		for (var i = 0; i < RayValues.Length; ++i)
-		{
-			if (Physics.Raycast(transform.position, direction(i), out var hit, MaxRayDistance, ~Wall.Mask)) RayValues[i] = hit.distance / MaxRayDistance;
-			else RayValues[i] = 1f;
-		}
-	}
+	// Human controls
+	//private void FixedUpdate()
+	//{
+	//	if (Input.GetKey(KeyCode.A)) Steer(-1);
+	//	if (Input.GetKey(KeyCode.D)) Steer(+1);
+	//}
 }

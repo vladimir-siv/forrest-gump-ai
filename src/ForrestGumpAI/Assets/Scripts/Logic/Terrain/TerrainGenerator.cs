@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class TerrainGenerator
 {
+	public static TerrainGenerator Easy   => new TerrainGenerator(EasyTerrain.Instance);
+	public static TerrainGenerator Medium => new TerrainGenerator(MediumTerrain.Instance);
+	public static TerrainGenerator Hard   => new TerrainGenerator(HardTerrain.Instance);
+
 	private readonly LinkedList<IPathway> pathways = new LinkedList<IPathway>();
 	private void Enqueue(IPathway pathway) => pathways.AddLast(pathway);
 	private void Dequeue() => pathways.RemoveFirst();

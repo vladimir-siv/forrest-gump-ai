@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour
 
 	public int AgentsAlive { get; private set; }
 	public int AgentsLeft { get; private set; }
-	private readonly TerrainGenerator terrain = new TerrainGenerator(Terrains.Medium);
+	private readonly TerrainGenerator terrain = TerrainGenerator.Medium;
 
 	private void Start()
 	{

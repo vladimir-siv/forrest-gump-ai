@@ -256,10 +256,10 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 		LeftEastExit  .localPosition = LeftEastExit  .localForward() * (halfScale - 1f) + LeftEastExit  .localUp() * LeftEastExit  .localScale.y / 2f - LeftEastExit  .localRight() * 2.5f;
 		RightEastExit .localPosition = RightEastExit .localForward() * (halfScale - 1f) + RightEastExit .localUp() * RightEastExit .localScale.y / 2f + RightEastExit .localRight() * 2.5f;
 		
-		Back .localPosition = Back .localForward() * (halfScale + 0.025f) + Back .localUp() * Back .localScale.y / 2f;
-		West .localPosition = West .localForward() * (halfScale + 0.025f) + West .localUp() * West .localScale.y / 2f;
-		North.localPosition = North.localForward() * (halfScale + 0.025f) + North.localUp() * North.localScale.y / 2f;
-		East .localPosition = East .localForward() * (halfScale + 0.025f) + East .localUp() * East .localScale.y / 2f;
+		Back .localPosition = Back .localForward() * (halfScale + 0.025f - 0f) + Back .localUp() * Back .localScale.y / 2f;
+		West .localPosition = West .localForward() * (halfScale + 0.025f - 2f) + West .localUp() * West .localScale.y / 2f;
+		North.localPosition = North.localForward() * (halfScale + 0.025f - 2f) + North.localUp() * North.localScale.y / 2f;
+		East .localPosition = East .localForward() * (halfScale + 0.025f - 2f) + East .localUp() * East .localScale.y / 2f;
 
 		SouthEast.RescaleX(innerScale);
 		NorthEast.RescaleX(innerScale);

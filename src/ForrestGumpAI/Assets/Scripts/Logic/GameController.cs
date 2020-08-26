@@ -76,7 +76,10 @@ public class GameController : MonoBehaviour
 		while (terrain.Remove()) ;
 	}
 
+#if AI_PLAYER
 	private void FixedUpdate() => AIController.Loop();
+#endif
+
 	private void OnApplicationQuit() => AIController.Cleanup();
 
 	private void UpdateDisplay()

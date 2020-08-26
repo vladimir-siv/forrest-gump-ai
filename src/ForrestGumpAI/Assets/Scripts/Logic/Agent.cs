@@ -118,10 +118,11 @@ public class Agent : MonoBehaviour, IPoolableObject
 		}
 	}
 
-	// Human controls
-	//private void FixedUpdate()
-	//{
-	//	if (Input.GetKey(KeyCode.A)) Steer(-1);
-	//	if (Input.GetKey(KeyCode.D)) Steer(+1);
-	//}
+#if HUMAN_PLAYER
+	private void FixedUpdate()
+	{
+		if (Input.GetKey(KeyCode.A)) Steer(-1);
+		if (Input.GetKey(KeyCode.D)) Steer(+1);
+	}
+#endif
 }

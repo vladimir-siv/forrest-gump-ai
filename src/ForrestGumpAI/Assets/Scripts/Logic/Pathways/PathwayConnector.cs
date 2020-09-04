@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
+public class PathwayConnector : Pathway
 {
 	private Transform _ground = null;
 	public Transform Ground
@@ -90,7 +90,6 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 	}
 
 	private bool firstEntered = false;
-	private int exited = 0;
 
 	public void Adjust()
 	{
@@ -150,16 +149,10 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	public void OnConstruct()
+	public override void OnConstruct()
 	{
 		firstEntered = false;
-		exited = 0;
-		gameObject.SetActive(true);
-	}
-
-	public void OnDestruct()
-	{
-		gameObject.SetActive(false);
+		base.OnConstruct();
 	}
 
 	private void OnTriggerEnter(Collider other)
@@ -173,18 +166,8 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 			}
 		}
 	}
-	private void OnTriggerExit(Collider other)
-	{
-		if (other.CompareTag("Agent"))
-		{
-			++exited;
-			Dependency.Controller.DestructTerrain();
-		}
-	}
 
-	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
-	public IPathway Next { get; private set; } = null;
-	public Vector3 ExitPoint
+	public override Vector3 ExitPoint
 	{
 		get
 		{
@@ -195,26 +178,20 @@ public class PathwayConnector : MonoBehaviour, IPathway, IPoolableObject
 			return position;
 		}
 	}
-	public void ConnectTo(Vector3 position, float rotation)
+	public override void ConnectTo(Vector3 position, float rotation)
 	{
 		Enter.gameObject.SetActive(false);
 		transform.rotation = Quaternion.Euler(0f, rotation, 0f);
 		transform.position = position + GroundHalfScale * transform.forward;
 	}
-	public void ConnectOn(IPathway pathway)
+	public override void ConnectOn(IPathway pathway)
 	{
 		var rotation = Angle + transform.rotation.eulerAngles.y;
 		pathway.ConnectTo(ExitPoint, rotation);
 		Next = pathway;
 	}
-	public void Disconnect()
+	public override void Disconnect()
 	{
 		Enter.gameObject.SetActive(true);
-	}
-	public void Destruct()
-	{
-		Next?.Disconnect();
-		Next = null;
-		ObjectActivator.Destruct(this);
 	}
 }

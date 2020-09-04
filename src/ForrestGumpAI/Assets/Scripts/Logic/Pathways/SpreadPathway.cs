@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
+public class SpreadPathway : Pathway
 {
 	[Flags] public enum Gate
 	{
@@ -286,18 +286,10 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	private int exited = 0;
-
-	public void OnConstruct()
+	public override void OnConstruct()
 	{
-		exited = 0;
 		Opened = Gate.None;
-		gameObject.SetActive(true);
-	}
-
-	public void OnDestruct()
-	{
-		gameObject.SetActive(false);
+		base.OnConstruct();
 	}
 
 	public void AdjustWalls()
@@ -349,18 +341,7 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 		East .gameObject.SetActive(!Opened.HasFlag(Gate.East));
 	}
 
-	private void OnTriggerExit(Collider other)
-	{
-		if (other.CompareTag("Agent"))
-		{
-			++exited;
-			Dependency.Controller.DestructTerrain();
-		}
-	}
-
-	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
-	public IPathway Next { get; private set; } = null;
-	public Vector3 ExitPoint
+	public override Vector3 ExitPoint
 	{
 		get
 		{
@@ -376,13 +357,13 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 			return transform.position + Scale * direction / 2f;
 		}
 	}
-	public void ConnectTo(Vector3 position, float rotation)
+	public override void ConnectTo(Vector3 position, float rotation)
 	{
 		Back.gameObject.SetActive(false);
 		transform.rotation = Quaternion.Euler(0f, rotation, 0f);
 		transform.position = position + Scale * transform.forward / 2f;
 	}
-	public void ConnectOn(IPathway pathway)
+	public override void ConnectOn(IPathway pathway)
 	{
 		var direction = Vector3.zero;
 		var anglecorrection = 0f;
@@ -408,14 +389,8 @@ public class SpreadPathway : MonoBehaviour, IPathway, IPoolableObject
 		pathway.ConnectTo(position, rotation);
 		Next = pathway;
 	}
-	public void Disconnect()
+	public override void Disconnect()
 	{
 		Back.gameObject.SetActive(true);
-	}
-	public void Destruct()
-	{
-		Next?.Disconnect();
-		Next = null;
-		ObjectActivator.Destruct(this);
 	}
 }

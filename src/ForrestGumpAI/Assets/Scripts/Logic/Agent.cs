@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 using Random = UnityEngine.Random;
@@ -38,7 +39,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public event Action<Agent> AgentPreDeath;
 	public event Action<Agent> AgentDeath;
 
-	public Collider CurrentPathway { get; private set; } = null;
+	public IPathway LastPathway { get; private set; } = null;
 	public int PathwaysEncountered { get; private set; } = 0;
 
 	public void OnConstruct()
@@ -53,7 +54,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 		}
 
 		IsDead = false;
-		CurrentPathway = null;
+		LastPathway = null;
 		PathwaysEncountered = 0;
 		gameObject.SetActive(true);
 	}
@@ -110,11 +111,20 @@ public class Agent : MonoBehaviour, IPoolableObject
 		if (other.CompareTag("Wall"))
 		{
 			Die();
+			return;
 		}
-		else if (other.CompareTag("Pathway"))
+
+		if (other.CompareTag("Pathway"))
 		{
-			++PathwaysEncountered;
-			CurrentPathway = other;
+			var pathway = other.GetComponent<IPathway>();
+
+			if (LastPathway == null || pathway == LastPathway.Next)
+			{
+				++PathwaysEncountered;
+				LastPathway = pathway;
+			}
+
+			return;
 		}
 	}
 

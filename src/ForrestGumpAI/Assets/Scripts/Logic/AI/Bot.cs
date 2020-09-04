@@ -90,7 +90,7 @@ public class Bot
 				case 4: return Agent.transform.right;
 			}
 
-			return Agent.transform.up;
+			throw new ArgumentException($"Invalid direction: {i}.");
 		}
 
 		for (var i = 0; i < 5; ++i)
@@ -105,8 +105,7 @@ public class Bot
 		if (agent != Agent) return;
 		Agent = null;
 
-		var pathway = agent.CurrentPathway.GetComponent<IPathway>();
-		var distance = Vector3.Distance(agent.transform.position, pathway.ExitPoint);
+		var distance = Vector3.Distance(agent.transform.position, agent.LastPathway.ExitPoint);
 		var progress = EvolutionTracker.Progress();
 		var decay = agent.PathwaysEncountered * 10f;
 

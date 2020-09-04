@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class RiggedPathway : MonoBehaviour, IPathway, IPoolableObject
+public class RiggedPathway : Pathway
 {
 	private Transform _leftEnter = null;
 	public Transform LeftEnter
@@ -104,7 +104,6 @@ public class RiggedPathway : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	private int exited = 0;
 	private readonly LinkedList<Wall> walls = new LinkedList<Wall>();
 
 	public void ClearWalls()
@@ -136,50 +135,27 @@ public class RiggedPathway : MonoBehaviour, IPathway, IPoolableObject
 		}
 	}
 
-	public void OnConstruct()
-	{
-		exited = 0;
-		gameObject.SetActive(true);
-	}
-
-	public void OnDestruct()
+	public override void OnDestruct()
 	{
 		ClearWalls();
-		gameObject.SetActive(false);
+		base.OnDestruct();
 	}
 
-	private void OnTriggerExit(Collider other)
-	{
-		if (other.CompareTag("Agent"))
-		{
-			++exited;
-			Dependency.Controller.DestructTerrain();
-		}
-	}
-
-	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
-	public IPathway Next { get; private set; } = null;
-	public Vector3 ExitPoint => transform.position + (Depth - 5f) * transform.forward;
-	public void ConnectTo(Vector3 position, float rotation)
+	public override Vector3 ExitPoint => transform.position + (Depth - 5f) * transform.forward;
+	public override void ConnectTo(Vector3 position, float rotation)
 	{
 		Back.gameObject.SetActive(false);
 		transform.rotation = Quaternion.Euler(0f, rotation, 0f);
 		transform.position = position + 5f * transform.forward;
 	}
-	public void ConnectOn(IPathway pathway)
+	public override void ConnectOn(IPathway pathway)
 	{
 		var rotation = transform.rotation.eulerAngles.y;
 		pathway.ConnectTo(ExitPoint, rotation);
 		Next = pathway;
 	}
-	public void Disconnect()
+	public override void Disconnect()
 	{
 		Back.gameObject.SetActive(true);
-	}
-	public void Destruct()
-	{
-		Next?.Disconnect();
-		Next = null;
-		ObjectActivator.Destruct(this);
 	}
 }

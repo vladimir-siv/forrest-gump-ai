@@ -74,6 +74,14 @@ public static class AIController
 				}
 			}
 		}
+
+		if (Input.GetKeyDown(KeyCode.Q))
+		{
+			for (var i = 0; i < agents.Length; ++i)
+			{
+				agents[i].Die();
+			}
+		}
 	}
 
 	public static void FixedLoop()

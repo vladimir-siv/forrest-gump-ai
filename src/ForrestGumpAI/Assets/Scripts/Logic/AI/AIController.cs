@@ -39,7 +39,7 @@ public static class AIController
 			Selection.RandFit(1u),
 			BasicBrain.Mating(first.Size, ((BasicBrain)first[0u]).NeuralNetwork.Params),
 			generations: 1000u,
-			mutation: 7.0f
+			mutation: 10.0f
 		);
 	}
 

@@ -1,4 +1,4 @@
 Input: 5
-FCLayer: 8
-FCLayer: 4
-FCLayer: 3
+FCLayer: 8-ELU
+FCLayer: 4-ELU
+FCLayer: 3-SIGMOID

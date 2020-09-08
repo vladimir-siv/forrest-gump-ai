@@ -735,7 +735,7 @@ MonoBehaviour:
   SpawnPoint: {x: 0, y: 0, z: 0}
   SpawnRotation: 0
   GenerationDisplay: {fileID: 1677277308}
-  TerrainLevel: 0
+  TerrainLevel: 1
 --- !u!1 &1677277306
 GameObject:
   m_ObjectHideFlags: 0

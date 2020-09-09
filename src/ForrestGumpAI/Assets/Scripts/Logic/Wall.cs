@@ -7,7 +7,7 @@ public class Wall : MonoBehaviour, IPoolableObject
 	{
 		get
 		{
-			if (mask < 0) mask = LayerMask.NameToLayer("Walls");
+			if (mask < 0) mask = LayerMask.GetMask("Walls");
 			return mask;
 		}
 	}

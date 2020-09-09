@@ -112,7 +112,7 @@ public class Bot
 
 		for (var i = 0; i < 5; ++i)
 		{
-			if (Physics.Raycast(Agent.transform.position, direction(i), out var hit, MaxRayDistance, ~Wall.Mask)) sensors[i] = hit.distance / MaxRayDistance;
+			if (Physics.Raycast(Agent.transform.position, direction(i), out var hit, MaxRayDistance, Wall.Mask)) sensors[i] = hit.distance / MaxRayDistance;
 			else sensors[i] = 1f;
 		}
 	}

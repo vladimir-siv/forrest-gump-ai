@@ -246,7 +246,7 @@ public class SpreadPathway : Pathway
 
 			var groundScale = scale / 10f;
 			Ground.localScale = new Vector3(groundScale, groundScale, groundScale);
-			Collider.size = new Vector3(scale + 5f, 3f, scale + 5f);
+			Collider.size = new Vector3(scale + 5f, 3f, scale + 2.5f);
 
 			AdjustWalls();
 		}

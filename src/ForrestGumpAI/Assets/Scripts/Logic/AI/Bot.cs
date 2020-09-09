@@ -88,26 +88,8 @@ public class Bot
 				case 2: return Agent.transform.forward;
 				case 3: return (Agent.transform.forward + Agent.transform.right).normalized;
 				case 4: return Agent.transform.right;
+				default: throw new ArgumentException($"Invalid direction: {i}.");
 			}
-
-			/*
-			
-			switch (i)
-			{
-				case 0: return -(Constants.TAN30 * Agent.transform.forward + Agent.transform.right).normalized;
-				case 1: return -Agent.transform.right;
-				case 2: return  (Constants.TAN30 * Agent.transform.forward - Agent.transform.right).normalized;
-				case 3: return  (Agent.transform.forward - Constants.TAN30 * Agent.transform.right).normalized;
-				case 4: return  Agent.transform.forward;
-				case 5: return  (Agent.transform.forward + Constants.TAN30 * Agent.transform.right).normalized;
-				case 6: return  (Constants.TAN30 * Agent.transform.forward + Agent.transform.right).normalized;
-				case 7: return  Agent.transform.right;
-				case 8: return  (Agent.transform.right - Constants.TAN30 * Agent.transform.forward).normalized;
-			}
-
-			*/
-
-			throw new ArgumentException($"Invalid direction: {i}.");
 		}
 
 		for (var i = 0; i < 5; ++i)

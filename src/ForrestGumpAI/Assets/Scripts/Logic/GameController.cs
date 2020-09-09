@@ -43,6 +43,7 @@ public class GameController : MonoBehaviour
 
 		terrain.Generate();
 		terrain.Generate();
+		terrain.Generate();
 
 		for (var i = 0; i < Agents.Length; ++i)
 		{
@@ -79,11 +80,6 @@ public class GameController : MonoBehaviour
 	public void GenerateTerrain()
 	{
 		terrain.Generate();
-		terrain.Generate();
-	}
-	public void DestructTerrain()
-	{
-		while (terrain.Remove()) ;
 	}
 
 #if AI_PLAYER

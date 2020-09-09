@@ -89,8 +89,6 @@ public class PathwayConnector : Pathway
 		}
 	}
 
-	private bool firstEntered = false;
-
 	public void Adjust()
 	{
 		var rotation = Quaternion.Euler(0f, Angle, 0f);
@@ -146,24 +144,6 @@ public class PathwayConnector : Pathway
 		{
 			LeftExit.RescaleZ(GroundHalfScale);
 			RightExit.RescaleZ(GroundHalfScale);
-		}
-	}
-
-	public override void OnConstruct()
-	{
-		firstEntered = false;
-		base.OnConstruct();
-	}
-
-	private void OnTriggerEnter(Collider other)
-	{
-		if (other.CompareTag("Agent"))
-		{
-			if (!firstEntered)
-			{
-				firstEntered = true;
-				Dependency.Controller.GenerateTerrain();
-			}
 		}
 	}
 

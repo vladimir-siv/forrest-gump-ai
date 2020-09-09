@@ -1,43 +1,52 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class Pathway : MonoBehaviour, IPathway, IPoolableObject
 {
-	protected int exited = 0;
+	private bool noEntry = true;
+	private HashSet<Agent> agents = new HashSet<Agent>();
 
-	public bool WaitingOnAgents => exited == 0 || Dependency.Controller.AgentsLeft > exited;
 	public IPathway Next { get; protected set; } = null;
-	
 	public abstract Vector3 ExitPoint { get; }
 	
 	public virtual void OnConstruct()
 	{
-		exited = 0;
+		noEntry = true;
+		agents.Clear();
+		Next = null;
 		gameObject.SetActive(true);
 	}
 	public virtual void OnDestruct()
 	{
+		noEntry = true;
+		agents.Clear();
 		Next?.Disconnect();
 		Next = null;
 		gameObject.SetActive(false);
 	}
 
-	private void OnTriggerExit(Collider other)
+	public void OnEnter(Agent agent)
 	{
-		if (other.CompareTag("Agent"))
+		if (noEntry)
 		{
-			var agent = other.GetComponent<Agent>();
-
-			if (agent.LastPathway == Next)
-			{
-				++exited;
-				Dependency.Controller.DestructTerrain();
-			}
+			noEntry = false;
+			Dependency.Controller.GenerateTerrain();
 		}
+
+		agents.Add(agent);
+	}
+	public void OnExit(Agent agent)
+	{
+		agents.Remove(agent);
 	}
 
 	public abstract void ConnectTo(Vector3 position, float rotation);
 	public abstract void ConnectOn(IPathway pathway);
 	public abstract void Disconnect();
-	
-	public void Destruct() => ObjectActivator.Destruct(this);
+
+	public void Destruct()
+	{
+		foreach (var agent in agents) agent.Die();
+		ObjectActivator.Destruct(this);
+	}
 }

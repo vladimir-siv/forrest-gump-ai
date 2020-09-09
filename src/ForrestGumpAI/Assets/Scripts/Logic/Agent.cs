@@ -120,6 +120,8 @@ public class Agent : MonoBehaviour, IPoolableObject
 			if (LastPathway == null || pathway == LastPathway.Next)
 			{
 				++PathwaysEncountered;
+				LastPathway?.OnExit(this);
+				pathway.OnEnter(this);
 				LastPathway = pathway;
 			}
 

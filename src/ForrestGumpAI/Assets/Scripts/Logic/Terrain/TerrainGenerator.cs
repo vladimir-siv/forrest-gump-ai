@@ -34,6 +34,13 @@ public class TerrainGenerator
 
 	public void Generate()
 	{
+		if (pathways.Count > 8)
+		{
+			var front = Peek();
+			Dequeue();
+			front.Destruct();
+		}
+
 		IPathway pathway;
 		var last = Last();
 
@@ -50,14 +57,5 @@ public class TerrainGenerator
 
 		last.ConnectOn(pathway);
 		Enqueue(pathway);
-	}
-	public bool Remove()
-	{
-		if (pathways.Count == 0) return false;
-		var front = Peek();
-		if (front.WaitingOnAgents) return false;
-		Dequeue();
-		front.Destruct();
-		return true;
 	}
 }

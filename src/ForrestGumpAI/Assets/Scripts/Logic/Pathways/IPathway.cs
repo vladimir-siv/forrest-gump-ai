@@ -2,9 +2,10 @@
 
 public interface IPathway
 {
-	bool WaitingOnAgents { get; }
 	IPathway Next { get; }
 	Vector3 ExitPoint { get; }
+	void OnEnter(Agent agent);
+	void OnExit(Agent agent);
 	void ConnectTo(Vector3 position, float rotation);
 	void ConnectOn(IPathway pathway);
 	void Disconnect();

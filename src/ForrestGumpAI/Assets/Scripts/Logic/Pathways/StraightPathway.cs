@@ -32,28 +32,63 @@ public class StraightPathway : Pathway
 		}
 	}
 
-	public float Width
+	private Transform _ground = null;
+	public Transform Ground
 	{
-		get => transform.localScale.x * 10f;
-		set => transform.localScale = new Vector3(value / 10f, transform.localScale.y, transform.localScale.z);
+		get
+		{
+			if (_ground == null) _ground = transform.GetChild(3);
+			return _ground;
+		}
 	}
+
+	private BoxCollider _collider = null;
+	public BoxCollider Collider
+	{
+		get
+		{
+			if (_collider == null) _collider = GetComponent<BoxCollider>();
+			return _collider;
+		}
+	}
+
 	public float Depth
 	{
-		get => transform.localScale.z * 10f;
-		set => transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, value / 10f);
+		get
+		{
+			return Ground.localScale.z * 10f;
+		}
+		set
+		{
+			var val = value / 10f;
+			if (val < .6f) val = .6f;
+
+			//if (val == Ground.localScale.z) return;
+
+			Ground.RescaleZ(val);
+			Ground.MoveZ((val - 1f) * 5f);
+
+			Left .RescaleZ(val * 10f);
+			Right.RescaleZ(val * 10f);
+			Left .MoveZ((val - 1f) * 5f);
+			Right.MoveZ((val - 1f) * 5f);
+
+			var size = Collider.size;
+			size.z = (val * 10f) + 2f;
+			Collider.size = size;
+
+			var center = Collider.center;
+			center.z = ((val * 10f) - 8f) / 2f;
+			Collider.center = center;
+		}
 	}
 
-	public void SetDimension(float width = 1f, float depth = 1f)
-	{
-		transform.localScale = new Vector3(width / 10f, transform.localScale.y, depth / 10f);
-	}
-
-	public override Vector3 ExitPoint => transform.position + Depth * transform.forward / 2f;
+	public override Vector3 ExitPoint => transform.position + (Depth - 5f) * transform.forward;
 	public override void ConnectTo(Vector3 position, float rotation)
 	{
 		Back.gameObject.SetActive(false);
 		transform.rotation = Quaternion.Euler(0f, rotation, 0f);
-		transform.position = position + Depth * transform.forward / 2f;
+		transform.position = position + 5f * transform.forward;
 	}
 	public override void ConnectOn(IPathway pathway)
 	{

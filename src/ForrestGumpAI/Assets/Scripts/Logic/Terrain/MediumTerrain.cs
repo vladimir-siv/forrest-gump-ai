@@ -12,7 +12,7 @@ public class MediumTerrain : ITerrainGenerator
 		{
 			case 0:
 				var straight = ObjectActivator.Construct<StraightPathway>();
-				straight.SetDimension(5f, Random.Range(10f, 20f));
+				straight.Depth = Random.Range(10f, 20f);
 				return straight;
 			case 1:
 				var rigged = ObjectActivator.Construct<RiggedPathway>();

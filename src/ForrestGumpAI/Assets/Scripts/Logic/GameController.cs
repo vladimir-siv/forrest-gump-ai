@@ -16,9 +16,11 @@ public class GameController : MonoBehaviour
 
 	[SerializeField] private Vector3 SpawnPoint = Vector3.zero;
 	[SerializeField] private float SpawnRotation = 0f;
+	[SerializeField] private uint TerrainLevel = 0u;
+	[SerializeField] private CameraController CameraController = null;
 	[SerializeField] private Text GenerationDisplay = null;
 	[SerializeField] private Text TimeDisplay = null;
-	[SerializeField] private uint TerrainLevel = 0u;
+	[SerializeField] private Text AgentInfoDisplay = null;
 
 	public int AgentsAlive { get; private set; }
 	public int AgentsLeft { get; private set; }
@@ -39,7 +41,7 @@ public class GameController : MonoBehaviour
 		AIController.Setup();
 		Restart();
 
-		StartCoroutine("UpdateTime");
+		StartCoroutine("UpdateDynamicInfo");
 	}
 	private void Restart()
 	{
@@ -87,14 +89,8 @@ public class GameController : MonoBehaviour
 	}
 
 #if AI_PLAYER
-	private void Update()
-	{
-		AIController.Loop();
-	}
-	private void FixedUpdate()
-	{
-		AIController.FixedLoop();
-	}
+	private void Update() => AIController.Loop();
+	private void FixedUpdate() => AIController.FixedLoop();
 	private void LateUpdate()
 	{
 		var diff = (DateTime.Now - terrain.LastGenerationTime).TotalSeconds;
@@ -110,12 +106,13 @@ public class GameController : MonoBehaviour
 	{
 		GenerationDisplay.text = $"Generation:\t{AIController.Generation:0000}\nAgents alive:\t{AgentsAlive:0000}";
 	}
-	private IEnumerator UpdateTime()
+	private IEnumerator UpdateDynamicInfo()
 	{
 		while (true)
 		{
-			yield return Timing.TimeRefreshTimeout;
+			yield return Timing.DynamicInfoRefreshTimeout;
 			TimeDisplay.text = $"Time:  {EvolutionTracker.Time():0000.0000}s";
+			AgentInfoDisplay.text = $"Agent: {CameraController.FollowingIndex + 1:0000}\nScore: {CameraController.Following?.Score ?? 0f:0000.0000}";
 		}
 	}
 

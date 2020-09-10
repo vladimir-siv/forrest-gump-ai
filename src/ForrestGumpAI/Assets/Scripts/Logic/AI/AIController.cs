@@ -77,10 +77,7 @@ public static class AIController
 
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
-			for (var i = 0; i < agents.Length; ++i)
-			{
-				agents[i].Die();
-			}
+			ForceNextGeneration();
 		}
 	}
 
@@ -109,5 +106,13 @@ public static class AIController
 		}
 
 		best.Save(BotManager.SavePath(Generation - 1u));
+	}
+
+	public static void ForceNextGeneration()
+	{
+		for (var i = 0; i < agents.Length; ++i)
+		{
+			agents[i].Die();
+		}
 	}
 }

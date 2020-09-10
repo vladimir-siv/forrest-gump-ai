@@ -39,7 +39,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public event Action<Agent> AgentDeath;
 
 	public IPathway LastPathway { get; private set; } = null;
-	public int PathwaysEncountered { get; private set; } = 0;
+	public float Score { get; private set; } = 0f;
 
 	public void OnConstruct()
 	{
@@ -54,7 +54,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 
 		IsDead = false;
 		LastPathway = null;
-		PathwaysEncountered = 0;
+		Score = 0f;
 		gameObject.SetActive(true);
 	}
 	public void OnDestruct()
@@ -119,9 +119,9 @@ public class Agent : MonoBehaviour, IPoolableObject
 
 			if (LastPathway == null || pathway == LastPathway.Next)
 			{
-				++PathwaysEncountered;
 				LastPathway?.OnExit(this);
 				pathway.OnEnter(this);
+				Score += pathway.Difficulty;
 				LastPathway = pathway;
 			}
 

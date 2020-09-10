@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class TerrainGenerator
 {
@@ -14,6 +16,8 @@ public class TerrainGenerator
 	private IPathway Last() => pathways.Last.Value;
 
 	private readonly ITerrainGenerator generator = null;
+
+	public DateTime LastGenerationTime { get; private set; } = DateTime.Now;
 
 	public TerrainGenerator(ITerrainGenerator generator) => this.generator = generator;
 
@@ -34,6 +38,8 @@ public class TerrainGenerator
 
 	public void Generate()
 	{
+		LastGenerationTime = DateTime.Now;
+
 		if (pathways.Count > 8)
 		{
 			var front = Peek();

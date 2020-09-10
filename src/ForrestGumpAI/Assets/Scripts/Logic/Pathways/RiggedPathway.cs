@@ -142,6 +142,7 @@ public class RiggedPathway : Pathway
 	}
 
 	public override Vector3 ExitPoint => transform.position + (Depth - 5f) * transform.forward;
+	public override float Difficulty => 6f + Mathf.Min(Depth / 10f, 3f);
 	public override void ConnectTo(Vector3 position, float rotation)
 	{
 		Back.gameObject.SetActive(false);

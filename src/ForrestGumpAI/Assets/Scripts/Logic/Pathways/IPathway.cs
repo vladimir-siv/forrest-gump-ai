@@ -3,6 +3,7 @@
 public interface IPathway
 {
 	IPathway Next { get; }
+	float Difficulty { get; }
 	Vector3 ExitPoint { get; }
 	void OnEnter(Agent agent);
 	void OnExit(Agent agent);

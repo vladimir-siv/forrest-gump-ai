@@ -357,6 +357,7 @@ public class SpreadPathway : Pathway
 			return transform.position + Scale * direction / 2f;
 		}
 	}
+	public override float Difficulty => 12f + (Opened != Gate.North ? 2f : 0f) + (MiddleWalls ? 4f : 0f);
 	public override void ConnectTo(Vector3 position, float rotation)
 	{
 		Back.gameObject.SetActive(false);

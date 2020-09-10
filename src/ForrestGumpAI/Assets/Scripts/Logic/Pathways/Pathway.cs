@@ -7,6 +7,7 @@ public abstract class Pathway : MonoBehaviour, IPathway, IPoolableObject
 	private HashSet<Agent> agents = new HashSet<Agent>();
 
 	public IPathway Next { get; protected set; } = null;
+	public abstract float Difficulty { get; }
 	public abstract Vector3 ExitPoint { get; }
 	
 	public virtual void OnConstruct()

@@ -105,11 +105,10 @@ public class Bot
 		Agent = null;
 
 		var distance = Vector3.Distance(agent.transform.position, agent.LastPathway.ExitPoint);
-		var progress = EvolutionTracker.Progress();
-		var decay = agent.PathwaysEncountered * 10f;
+		var time = EvolutionTracker.Time();
 
-		var reward = Mathf.Pow(progress / .17e2f, 4f);
-		var penalty = Mathf.Pow(distance / .24e3f, 4f) * decay;
+		var reward = Mathf.Pow(agent.Score / .17e3f, 4f);
+		var penalty = Mathf.Pow(distance / .54e3f, 4f) * time;
 
 		Brain.EvolutionValue = Mathf.Max(reward - penalty, float.Epsilon);
 	}

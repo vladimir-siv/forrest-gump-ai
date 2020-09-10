@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,7 @@ public class GameController : MonoBehaviour
 	[SerializeField] private Vector3 SpawnPoint = Vector3.zero;
 	[SerializeField] private float SpawnRotation = 0f;
 	[SerializeField] private Text GenerationDisplay = null;
+	[SerializeField] private Text TimeDisplay = null;
 	[SerializeField] private uint TerrainLevel = 0u;
 
 	public int AgentsAlive { get; private set; }
@@ -36,6 +38,8 @@ public class GameController : MonoBehaviour
 		Dependency.Create(this);
 		AIController.Setup();
 		Restart();
+
+		StartCoroutine("UpdateTime");
 	}
 	private void Restart()
 	{
@@ -58,13 +62,13 @@ public class GameController : MonoBehaviour
 		
 		AIController.CycleBegin();
 
-		UpdateDisplay();
+		UpdateAgentCount();
 	}
 
 	private IEnumerator AgentDeath(object agent)
 	{
 		--AgentsAlive;
-		UpdateDisplay();
+		UpdateAgentCount();
 
 		yield return Timing.RagdollTimeout;
 
@@ -83,14 +87,37 @@ public class GameController : MonoBehaviour
 	}
 
 #if AI_PLAYER
-	private void Update() => AIController.Loop();
-	private void FixedUpdate() => AIController.FixedLoop();
+	private void Update()
+	{
+		AIController.Loop();
+	}
+	private void FixedUpdate()
+	{
+		AIController.FixedLoop();
+	}
+	private void LateUpdate()
+	{
+		var diff = (DateTime.Now - terrain.LastGenerationTime).TotalSeconds;
+		if (diff > 30f) AIController.ForceNextGeneration();
+	}
 #endif
 
 	private void OnApplicationQuit() => AIController.Cleanup();
 
-	private void UpdateDisplay()
+	#region UI
+
+	private void UpdateAgentCount()
 	{
 		GenerationDisplay.text = $"Generation:\t{AIController.Generation:0000}\nAgents alive:\t{AgentsAlive:0000}";
 	}
+	private IEnumerator UpdateTime()
+	{
+		while (true)
+		{
+			yield return Timing.TimeRefreshTimeout;
+			TimeDisplay.text = $"Time:  {EvolutionTracker.Time():0000.0000}s";
+		}
+	}
+
+	#endregion
 }

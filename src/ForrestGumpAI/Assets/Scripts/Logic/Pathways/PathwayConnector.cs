@@ -158,6 +158,7 @@ public class PathwayConnector : Pathway
 			return position;
 		}
 	}
+	public override float Difficulty => 5f + Angle / 45f;
 	public override void ConnectTo(Vector3 position, float rotation)
 	{
 		Enter.gameObject.SetActive(false);

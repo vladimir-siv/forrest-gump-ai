@@ -13,7 +13,7 @@ public class Bot
 		{
 			if (prototype == null)
 			{
-				prototype = new NeuralBuilder(Inputs);
+				prototype = new NeuralBuilder(Shape.As2D(1u, Inputs));
 				prototype.FCLayer(8u, ActivationFunction.ELU);
 				prototype.FCLayer(4u, ActivationFunction.ELU);
 				prototype.FCLayer(3u, ActivationFunction.Sigmoid);

@@ -19,8 +19,7 @@ public static class AIController
 		if (bots.Length == 1)
 		{
 			// Replay bot
-			var brain = new BasicBrain(Bot.BrainPrototype);
-			brain.Load(BotManager.Replay);
+			var brain = BotManager.LoadNeatBrain(BotManager.Replay);
 			bots[0] = new Bot(brain);
 			return;
 		}
@@ -36,8 +35,8 @@ public static class AIController
 		system = new DarwinBgea
 		(
 			first,
-			Selection.RandFit(1u),
-			BasicBrain.Mating(first.Size, ((BasicBrain)first[0u]).NeuralNetwork.Params),
+			Selection.SpeciatedRandFit(20f),
+			NeatBrain.Mating(),
 			generations: 1000u,
 			mutation: 10.0f
 		);
@@ -48,7 +47,6 @@ public static class AIController
 		system?.Dispose();
 		system = null;
 
-		Bot.BrainPrototype = null;
 		GICore.Release();
 	}
 
@@ -95,13 +93,13 @@ public static class AIController
 
 		system.Cycle();
 
-		BasicBrain best = null;
+		NeatBrain best = null;
 
 		for (var i = 0; i < bots.Length; ++i)
 		{
-			bots[i].Brain = (BasicBrain)system.Generation[(uint)i];
+			bots[i].Brain = (NeatBrain)system.Generation[(uint)i];
 
-			var prev = (BasicBrain)system.Previous[(uint)i];
+			var prev = (NeatBrain)system.Previous[(uint)i];
 			if (best == null || prev.EvolutionValue > best.EvolutionValue) best = prev;
 		}
 

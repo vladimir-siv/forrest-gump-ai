@@ -5,59 +5,22 @@ using GrandIntelligence;
 public class Bot
 {
 	public const uint Inputs = 5u;
-
-	private static NeuralBuilder prototype = null;
-	public static NeuralBuilder BrainPrototype
-	{
-		get
-		{
-			if (prototype == null)
-			{
-				prototype = new NeuralBuilder(Shape.As2D(1u, Inputs));
-				prototype.FCLayer(8u, ActivationFunction.ELU);
-				prototype.FCLayer(4u, ActivationFunction.ELU);
-				prototype.FCLayer(3u, ActivationFunction.Sigmoid);
-			}
-
-			return prototype;
-		}
-		set
-		{
-			if (value == prototype) return;
-			prototype?.Dispose();
-			prototype = value;
-		}
-	}
+	public const uint Outputs = 3u;
 
 	private readonly float[] sensors = new float[Inputs];
-	private readonly float[] outputs = new float[3];
+	private readonly float[] outputs = new float[Outputs];
 
 	public Agent Agent { get; private set; } = null;
-	public BasicBrain Brain { get; set; } = null;
+	public NeatBrain Brain { get; set; } = null;
 
-	public Bot(BasicBrain brain) => Brain = brain ?? throw new ArgumentNullException(nameof(brain));
-	public Bot()
-	{
-		Brain = new BasicBrain(BrainPrototype);
-		using (var randomize = Device.Active.Prepare("randomize"))
-		using (var it = new NeuralIterator())
-		{
-			randomize.Set('U');
-			randomize.Set(-1.0f, 0);
-			randomize.Set(+1.0f, 1);
-
-			for (var param = it.Begin(Brain.NeuralNetwork); param != null; param = it.Next())
-			{
-				randomize.Set(param.Memory);
-				API.Wait(API.Invoke(randomize.Handle));
-			}
-		}
-	}
+	public Bot(NeatBrain brain) => Brain = brain ?? throw new ArgumentNullException(nameof(brain));
+	public Bot() => Brain = new NeatBrain(Inputs, 0u, Outputs, ActivationFunction.ELU, ActivationFunction.Sigmoid);
 
 	public void Init(Agent agent)
 	{
 		Agent = agent;
 		agent.AgentPreDeath += AgentDeath;
+		Brain.Compile();
 		for (var i = 0; i < sensors.Length; ++i) sensors[i] = 0f;
 	}
 

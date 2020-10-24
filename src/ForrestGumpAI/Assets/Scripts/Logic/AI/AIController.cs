@@ -36,7 +36,7 @@ public static class AIController
 		(
 			first,
 			Selection.SpeciatedRandFit(20f),
-			NeatBrain.Mating(),
+			NeatBrain.RandomUniformCrossover(),
 			generations: 1000u,
 			mutation: 10.0f
 		);

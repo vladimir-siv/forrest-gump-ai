@@ -4,7 +4,7 @@ using UnityEngine;
 
 using Random = UnityEngine.Random;
 
-public class Agent : MonoBehaviour, IPoolableObject
+public class Runner : MonoBehaviour, IPoolableObject
 {
 	[SerializeField] private float acceleration = 250f;
 	[SerializeField] private float velocity = 7.5f;
@@ -35,9 +35,10 @@ public class Agent : MonoBehaviour, IPoolableObject
 	public bool CanSteer { get; private set; } = false;
 	public float BuiltVelocity { get; private set; } = 0f;
 
-	public event Action<Agent> AgentPreDeath;
-	public event Action<Agent> AgentDeath;
+	public event Action RunnerDeath;
 
+	private DateTime spawnTime;
+	public TimeSpan TimeSinceSpawned => DateTime.Now - spawnTime;
 	public IPathway LastPathway { get; private set; } = null;
 	public float Score { get; private set; } = 0f;
 
@@ -45,8 +46,8 @@ public class Agent : MonoBehaviour, IPoolableObject
 	{
 		if (transform.childCount == 0)
 		{
-			var agentModelIndex = Random.Range(0, Dependency.Controller.AgentModels.Length);
-			var agentModel = Dependency.Controller.AgentModels[agentModelIndex];
+			var agentModelIndex = Random.Range(0, Dependency.Controller.RunnerModels.Length);
+			var agentModel = Dependency.Controller.RunnerModels[agentModelIndex];
 			var model = Instantiate(agentModel);
 			model.transform.SetParent(transform);
 			model.transform.localPosition = Vector3.zero;
@@ -61,8 +62,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 	{
 		animator.Rebind();
 		gameObject.SetActive(false);
-		AgentPreDeath = null;
-		AgentDeath = null;
+		RunnerDeath = null;
 	}
 
 	public void Run()
@@ -71,6 +71,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 		IsRunning = true;
 		animator.SetTrigger("Run");
 		StartCoroutine("Accelerate");
+		spawnTime = DateTime.Now;
 	}
 
 	private IEnumerator Accelerate()
@@ -101,8 +102,7 @@ public class Agent : MonoBehaviour, IPoolableObject
 		BuiltVelocity = 0f;
 		body.velocity = Vector3.zero;
 		animator.SetTrigger("Die");
-		AgentPreDeath?.Invoke(this);
-		AgentDeath?.Invoke(this);
+		RunnerDeath?.Invoke();
 	}
 
 	private void OnTriggerEnter(Collider other)

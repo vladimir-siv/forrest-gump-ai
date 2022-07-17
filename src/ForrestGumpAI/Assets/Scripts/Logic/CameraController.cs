@@ -4,7 +4,7 @@ public class CameraController : MonoBehaviour
 {
 	[SerializeField] private CameraMode Mode = CameraMode.ThirdPerson;
 
-	public Agent Following { get; private set; }
+	public Runner Following { get; private set; }
 	public int FollowingIndex { get; private set; }
 
 	private void Update()
@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
 
 		if ((Dependency.Controller.AgentsAlive > 0) && (xPressed || Following == null || Following.IsDead))
 		{
-			var agents = Dependency.Controller.Agents;
+			var agents = Dependency.Controller.Runners;
 
 			if (xPressed) FollowingIndex = (FollowingIndex + 1) % agents.Length;
 

@@ -8,7 +8,7 @@
 		if (_PoolsInitialized) return;
 		_PoolsInitialized = true;
 
-		ObjectActivator.CreatePool<Agent>(Controller.AgentPrototype);
+		ObjectActivator.CreatePool<Runner>(Controller.RunnerPrototype);
 		ObjectActivator.CreatePool<Wall>(Controller.WallPrototype);
 		ObjectActivator.CreatePool<PathwayConnector>(Controller.PathwayConnectorPrototype);
 		ObjectActivator.CreatePool<StraightPathway>(Controller.StraightPathwayPrototype);

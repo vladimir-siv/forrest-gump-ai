@@ -606,13 +606,13 @@ MonoBehaviour:
   StraightPathwayPrototype: {fileID: 8167584340869304622, guid: d00365c01912ac748af7c2f4efe413ee, type: 3}
   RiggedPathwayPrototype: {fileID: 8167584340869304622, guid: fe70f1e3f26349e479c1eac041c569cd, type: 3}
   SpreadPathwayPrototype: {fileID: 8167584340869304622, guid: 04398f074c43af544be0710b8ac82bf3, type: 3}
-  AgentPrototype: {fileID: 2053639975970049271, guid: a4f5b0dbbe1f7e041b9aa40314bdbb7f, type: 3}
-  AgentModels:
+  RunnerPrototype: {fileID: 2053639975970049271, guid: a4f5b0dbbe1f7e041b9aa40314bdbb7f, type: 3}
+  RunnerModels:
   - {fileID: 8588459379381067129, guid: 01957471a57a70f47abc5633a1fd6a56, type: 3}
   - {fileID: 8487414299444704505, guid: e7ec36335fd854b43a1768915aa63b38, type: 3}
   - {fileID: 7772604731365867148, guid: 36d51623281e7a74e896d04da730c1ff, type: 3}
   - {fileID: 1231382216183939299, guid: 645aebf6d07374d4995bca72ce38d51b, type: 3}
-  Agents:
+  Runners:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Pathway : MonoBehaviour, IPathway, IPoolableObject
 {
 	private bool noEntry = true;
-	private HashSet<Agent> agents = new HashSet<Agent>();
+	private HashSet<Runner> agents = new HashSet<Runner>();
 
 	public IPathway Next { get; protected set; } = null;
 	public abstract float Difficulty { get; }
@@ -26,7 +26,7 @@ public abstract class Pathway : MonoBehaviour, IPathway, IPoolableObject
 		gameObject.SetActive(false);
 	}
 
-	public void OnEnter(Agent agent)
+	public void OnEnter(Runner agent)
 	{
 		if (noEntry)
 		{
@@ -36,7 +36,7 @@ public abstract class Pathway : MonoBehaviour, IPathway, IPoolableObject
 
 		agents.Add(agent);
 	}
-	public void OnExit(Agent agent)
+	public void OnExit(Runner agent)
 	{
 		agents.Remove(agent);
 	}

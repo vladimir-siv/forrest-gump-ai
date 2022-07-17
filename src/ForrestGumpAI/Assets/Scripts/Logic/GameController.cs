@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using GrandIntelligence;
 
 public class GameController : MonoBehaviour
 {
@@ -10,9 +11,9 @@ public class GameController : MonoBehaviour
 	public GameObject StraightPathwayPrototype = null;
 	public GameObject RiggedPathwayPrototype = null;
 	public GameObject SpreadPathwayPrototype = null;
-	public GameObject AgentPrototype = null;
-	public GameObject[] AgentModels = null;
-	public Agent[] Agents = null;
+	public GameObject RunnerPrototype = null;
+	public GameObject[] RunnerModels = null;
+	public Runner[] Runners = null;
 
 	[SerializeField] private Vector3 SpawnPoint = Vector3.zero;
 	[SerializeField] private float SpawnRotation = 0f;
@@ -25,7 +26,12 @@ public class GameController : MonoBehaviour
 	public int AgentsAlive { get; private set; }
 	public int AgentsLeft { get; private set; }
 
+	private Agent[] agents = null;
 	private TerrainGenerator terrain = null;
+	private DateTime startTime;
+
+	private Simulation simulation = new Simulation();
+	private uint generation = 0u;
 
 	private void Start()
 	{
@@ -38,7 +44,13 @@ public class GameController : MonoBehaviour
 		}
 
 		Dependency.Create(this);
-		AIController.Setup();
+		GICore.Init(new Spec(GrandIntelligence.DeviceType.Cpu));
+
+		agents = new Agent[Runners.Length];
+		for (var i = 0; i < agents.Length; ++i)
+			agents[i] = new Agent();
+
+		simulation.Begin(agents);
 		Restart();
 
 		StartCoroutine("UpdateDynamicInfo");
@@ -51,35 +63,47 @@ public class GameController : MonoBehaviour
 		terrain.Generate();
 		terrain.Generate();
 
-		for (var i = 0; i < Agents.Length; ++i)
+		for (var i = 0; i < Runners.Length; ++i)
 		{
-			Agents[i] = ObjectActivator.Construct<Agent>();
-			Agents[i].AgentDeath += agent => StartCoroutine("AgentDeath", agent);
-			Agents[i].transform.position = spawn.transform.position - spawn.transform.forward * 2.5f;
-			Agents[i].transform.rotation = spawn.transform.rotation;
-			Agents[i].Run();
+			var agent = ObjectActivator.Construct<Runner>();
+			Runners[i] = agent;
+			Runners[i].RunnerDeath += () => StartCoroutine("RunnerDeath", agent);
+			Runners[i].transform.position = spawn.transform.position - spawn.transform.forward * 2.5f;
+			Runners[i].transform.rotation = spawn.transform.rotation;
+			Runners[i].Run();
+			agents[i].AssignAgent(Runners[i]);
 		}
 
-		AgentsAlive = AgentsLeft = Agents.Length;
-		
-		AIController.CycleBegin();
+		AgentsAlive = AgentsLeft = Runners.Length;
+
+		startTime = DateTime.Now;
+		++generation;
+		simulation.Start();
 
 		UpdateAgentCount();
 	}
 
-	private IEnumerator AgentDeath(object agent)
+	private IEnumerator RunnerDeath(object agent)
 	{
 		--AgentsAlive;
 		UpdateAgentCount();
 
 		yield return Timing.RagdollTimeout;
 
-		ObjectActivator.Destruct((Agent)agent);
+		ObjectActivator.Destruct((Runner)agent);
 		
 		if (--AgentsLeft == 0)
 		{
-			AIController.CycleEnd();
+			simulation.CycleEnd();
 			Restart();
+		}
+	}
+
+	private void ForceNextGeneration()
+	{
+		for (var i = 0; i < Runners.Length; ++i)
+		{
+			Runners[i].Die();
 		}
 	}
 
@@ -89,29 +113,44 @@ public class GameController : MonoBehaviour
 	}
 
 #if AI_PLAYER
-	private void Update() => AIController.Loop();
-	private void FixedUpdate() => AIController.FixedLoop();
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Q))
+		{
+			ForceNextGeneration();
+		}
+	}
+	private void FixedUpdate()
+	{
+		for (var i = 0; i < agents.Length; ++i)
+			if (!Runners[i].IsDead && Runners[i].IsRunning && Runners[i].CanSteer)
+				agents[i].Think();
+	}
 	private void LateUpdate()
 	{
 		var diff = (DateTime.Now - terrain.LastGenerationTime).TotalSeconds;
-		if (diff > 30f) AIController.ForceNextGeneration();
+		if (diff > 30f) ForceNextGeneration();
 	}
 #endif
 
-	private void OnApplicationQuit() => AIController.Cleanup();
+	private void OnApplicationQuit()
+	{
+		simulation.End();
+		GICore.Release();
+	}
 
 	#region UI
 
 	private void UpdateAgentCount()
 	{
-		GenerationDisplay.text = $"Generation:\t{AIController.Generation:0000}\nAgents alive:\t{AgentsAlive:0000}";
+		GenerationDisplay.text = $"Generation:\t{generation:0000}\nAgents alive:\t{AgentsAlive:0000}";
 	}
 	private IEnumerator UpdateDynamicInfo()
 	{
 		while (true)
 		{
 			yield return Timing.DynamicInfoRefreshTimeout;
-			TimeDisplay.text = $"Time:  {EvolutionTracker.Time():0000.0000}s";
+			TimeDisplay.text = $"Time:  {(float)(DateTime.Now - startTime).TotalSeconds:0000.0000}s";
 			AgentInfoDisplay.text = $"Agent: {CameraController.FollowingIndex + 1:0000}\nScore: {CameraController.Following?.Score ?? 0f:0000.0000}";
 		}
 	}

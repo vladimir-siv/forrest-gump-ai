@@ -68,7 +68,7 @@ public class GameController : MonoBehaviour
 		for (var i = 0; i < Runners.Length; ++i)
 		{
 			var runner = ObjectActivator.Construct<Runner>();
-			agents[i].AssignAgent(runner);
+			agents[i].AssignRunner(runner);
 			Runners[i] = runner;
 			Runners[i].RunnerDeath += () => StartCoroutine("RunnerDeath", runner);
 			Runners[i].transform.position = spawn.transform.position - spawn.transform.forward * 2.5f;

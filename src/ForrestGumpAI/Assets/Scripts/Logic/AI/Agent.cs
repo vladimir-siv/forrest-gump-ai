@@ -4,7 +4,7 @@ public class Agent
 {
 	private Runner runner = null;
 
-	public void AssignAgent(Runner runner)
+	public void AssignRunner(Runner runner)
 	{
 		this.runner = runner;
 	}

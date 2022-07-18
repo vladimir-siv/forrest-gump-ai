@@ -815,7 +815,7 @@ MonoBehaviour:
   - {fileID: 0}
   SpawnPoint: {x: 0, y: 0, z: 0}
   SpawnRotation: 0
-  TerrainLevel: 2
+  TerrainLevel: 0
   CameraController: {fileID: 963194229}
   GenerationDisplay: {fileID: 1677277308}
   TimeDisplay: {fileID: 801716066}

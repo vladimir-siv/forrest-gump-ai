@@ -57,6 +57,8 @@ public class GameController : MonoBehaviour
 	}
 	private void Restart()
 	{
+		simulation.EpisodeStart();
+
 		var spawn = terrain.Begin(SpawnPoint, SpawnRotation);
 
 		terrain.Generate();
@@ -65,36 +67,35 @@ public class GameController : MonoBehaviour
 
 		for (var i = 0; i < Runners.Length; ++i)
 		{
-			var agent = ObjectActivator.Construct<Runner>();
-			Runners[i] = agent;
-			Runners[i].RunnerDeath += () => StartCoroutine("RunnerDeath", agent);
+			var runner = ObjectActivator.Construct<Runner>();
+			agents[i].AssignAgent(runner);
+			Runners[i] = runner;
+			Runners[i].RunnerDeath += () => StartCoroutine("RunnerDeath", runner);
 			Runners[i].transform.position = spawn.transform.position - spawn.transform.forward * 2.5f;
 			Runners[i].transform.rotation = spawn.transform.rotation;
 			Runners[i].Run();
-			agents[i].AssignAgent(Runners[i]);
 		}
 
 		AgentsAlive = AgentsLeft = Runners.Length;
 
 		startTime = DateTime.Now;
 		++generation;
-		simulation.Start();
 
 		UpdateAgentCount();
 	}
 
-	private IEnumerator RunnerDeath(object agent)
+	private IEnumerator RunnerDeath(object runner)
 	{
 		--AgentsAlive;
 		UpdateAgentCount();
+		simulation.RunnerTerminated(AgentsAlive);
 
 		yield return Timing.RagdollTimeout;
 
-		ObjectActivator.Destruct((Runner)agent);
-		
+		ObjectActivator.Destruct((Runner)runner);
+
 		if (--AgentsLeft == 0)
 		{
-			simulation.CycleEnd();
 			Restart();
 		}
 	}
@@ -151,7 +152,7 @@ public class GameController : MonoBehaviour
 		{
 			yield return Timing.DynamicInfoRefreshTimeout;
 			TimeDisplay.text = $"Time:  {(float)(DateTime.Now - startTime).TotalSeconds:0000.0000}s";
-			AgentInfoDisplay.text = $"Agent: {CameraController.FollowingIndex + 1:0000}\nScore: {CameraController.Following?.Score ?? 0f:0000.0000}";
+			AgentInfoDisplay.text = $"Agent: {CameraController.FollowingIndex + 1:0000}";
 		}
 	}
 

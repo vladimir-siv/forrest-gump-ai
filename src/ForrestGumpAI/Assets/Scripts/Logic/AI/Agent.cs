@@ -10,17 +10,18 @@ public class Agent
 	private readonly float[] sensors = new float[Inputs];
 	private readonly float[] outputs = new float[Outputs];
 
-	private Runner Runner { get; set; } = null;
-	public NeatBrain Brain { get; set; } = null;
+	private Runner runner = null;
+	private float score = 0f;
 
-	public Agent() => Brain = new NeatBrain(Inputs, 0u, Outputs, ActivationFunction.ELU, ActivationFunction.Sigmoid);
+	public BasicBrain Brain { get; set; } = null;
 
 	public void AssignAgent(Runner runner)
 	{
-		Runner = runner;
+		this.runner = runner;
+		runner.PathwayEntered += pathway => score += pathway.Difficulty;
 		runner.RunnerDeath += RunnerDeath;
-		Brain.Compile();
 		for (var i = 0; i < sensors.Length; ++i) sensors[i] = 0f;
+		score = 0f;
 	}
 
 	public void Think()
@@ -32,7 +33,7 @@ public class Agent
 		Brain.NeuralNetwork.Output.Retrieve(outputs);
 
 		var decision = outputs.ArgMax() - 1;
-		if (decision != 0) Runner.Steer(decision);
+		if (decision != 0) runner.Steer(decision);
 	}
 
 	private void RefreshSensors()
@@ -43,28 +44,29 @@ public class Agent
 		{
 			switch (i)
 			{
-				case 0: return -Runner.transform.right;
-				case 1: return (Runner.transform.forward - Runner.transform.right).normalized;
-				case 2: return Runner.transform.forward;
-				case 3: return (Runner.transform.forward + Runner.transform.right).normalized;
-				case 4: return Runner.transform.right;
+				case 0: return -runner.transform.right;
+				case 1: return (runner.transform.forward - runner.transform.right).normalized;
+				case 2: return runner.transform.forward;
+				case 3: return (runner.transform.forward + runner.transform.right).normalized;
+				case 4: return runner.transform.right;
 				default: throw new ArgumentException($"Invalid direction: {i}.");
 			}
 		}
 
-		for (var i = 0; i < 5; ++i)
+		for (var i = 0; i < Inputs; ++i)
 		{
-			if (Physics.Raycast(Runner.transform.position, direction(i), out var hit, MaxRayDistance, Wall.Mask)) sensors[i] = hit.distance / MaxRayDistance;
+			var hit = runner.Raycast(direction(i), MaxRayDistance);
+			if (hit != null) sensors[i] = hit.Value.distance / MaxRayDistance;
 			else sensors[i] = 1f;
 		}
 	}
 
 	private void RunnerDeath()
 	{
-		var distance = Vector3.Distance(Runner.transform.position, Runner.LastPathway.ExitPoint);
-		var time = (float)Runner.TimeSinceSpawned.TotalSeconds;
+		var distance = Vector3.Distance(runner.transform.position, runner.LastPathway.ExitPoint);
+		var time = (float)runner.TimeSinceSpawned.TotalSeconds;
 
-		var reward = Mathf.Pow(Runner.Score / .17e3f, 4f);
+		var reward = Mathf.Pow(score / .17e3f, 4f);
 		var penalty = Mathf.Pow(distance / .54e3f, 4f) * time;
 
 		Brain.EvolutionValue = Mathf.Max(reward - penalty, float.Epsilon);

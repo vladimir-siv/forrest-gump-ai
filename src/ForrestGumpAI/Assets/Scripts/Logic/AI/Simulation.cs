@@ -9,45 +9,49 @@ public class Simulation
 	{
 		this.agents = agents;
 
-		var first = new Population((uint)agents.Length);
+		var prototype = new NeuralBuilder(Shape.As2D(1u, Agent.Inputs));
+		prototype.FCLayer(8u, ActivationFunction.ELU);
+		prototype.FCLayer(4u, ActivationFunction.ELU);
+		prototype.FCLayer(Agent.Outputs, ActivationFunction.Sigmoid);
+
+		var firstGen = new Population((uint)agents.Length);
 		for (var i = 0; i < agents.Length; ++i)
-			first.Add(agents[i].Brain);
+		{
+			var brain = new BasicBrain(prototype);
+			brain.Randomize(-1.0f, +1.0f, Distribution.Uniform);
+			firstGen.Add(brain);
+		}
 
 		evolution = new DarwinBgea
 		(
-			first,
-			Selection.SpeciatedRandFit(20f),
-			NeatBrain.RandomUniformCrossover(),
+			firstGen,
+			Selection.RandFit(1u),
+			BasicBrain.SequentialEvenCrossover(firstGen.Size, ((BasicBrain)firstGen[0u]).NeuralNetwork.Params),
 			generations: 1000u,
 			mutation: 10.0f
 		);
+
+		prototype.Dispose();
 	}
 
-	public void Start()
+	public void EpisodeStart()
 	{
+		for (var i = 0; i < agents.Length; ++i)
+		{
+			agents[i].Brain = (BasicBrain)evolution.Generation[(uint)i];
+		}
+	}
 
+	public void RunnerTerminated(int runnersLeft)
+	{
+		if (runnersLeft == 0)
+		{
+			evolution.Cycle();
+		}
 	}
 
 	public void End()
 	{
 		evolution?.Dispose();
-		evolution = null;
-	}
-
-	public void CycleEnd()
-	{
-		if (evolution == null) return;
-
-		evolution.Cycle();
-
-		NeatBrain best = null;
-
-		for (var i = 0; i < agents.Length; ++i)
-		{
-			agents[i].Brain = (NeatBrain)evolution.Generation[(uint)i];
-
-			var prev = (NeatBrain)evolution.Previous[(uint)i];
-			if (best == null || prev.EvolutionValue > best.EvolutionValue) best = prev;
-		}
 	}
 }

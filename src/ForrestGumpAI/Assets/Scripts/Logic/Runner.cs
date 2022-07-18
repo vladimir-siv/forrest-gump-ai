@@ -35,13 +35,13 @@ public class Runner : MonoBehaviour, IPoolableObject
 	public bool CanSteer { get; private set; } = false;
 	public float BuiltVelocity { get; private set; } = 0f;
 
+	public event Action<IPathway> PathwayEntered;
 	public event Action RunnerDeath;
 
 	private DateTime spawnTime;
 	public TimeSpan TimeSinceSpawned => DateTime.Now - spawnTime;
 	public IPathway LastPathway { get; private set; } = null;
-	public float Score { get; private set; } = 0f;
-
+	
 	public void OnConstruct()
 	{
 		if (transform.childCount == 0)
@@ -55,13 +55,13 @@ public class Runner : MonoBehaviour, IPoolableObject
 
 		IsDead = false;
 		LastPathway = null;
-		Score = 0f;
 		gameObject.SetActive(true);
 	}
 	public void OnDestruct()
 	{
 		animator.Rebind();
 		gameObject.SetActive(false);
+		PathwayEntered = null;
 		RunnerDeath = null;
 	}
 
@@ -93,6 +93,12 @@ public class Runner : MonoBehaviour, IPoolableObject
 		body.velocity = transform.forward * BuiltVelocity;
 	}
 
+	public RaycastHit? Raycast(Vector3 direction, float maxRayDistance)
+	{
+		if (Physics.Raycast(transform.position, direction, out var hit, maxRayDistance, Wall.Mask)) return hit;
+		return null;
+	}
+
 	public void Die()
 	{
 		if (IsDead) return;
@@ -121,8 +127,8 @@ public class Runner : MonoBehaviour, IPoolableObject
 			{
 				LastPathway?.OnExit(this);
 				pathway.OnEnter(this);
-				Score += pathway.Difficulty;
 				LastPathway = pathway;
+				PathwayEntered?.Invoke(pathway);
 			}
 
 			return;
